@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Kunstmaan\AdminBundle\Helper\Menu\MenuItem;
 use Kunstmaan\AdminBundle\Helper\Menu\MenuAdaptorInterface;
-use Kunstmaan\AdminBundle\Helper\Menu\MenuBuilder;
+use Kunstmaan\AdminBundle\Helper\Menu\OldMenuBuilder;
 use Kunstmaan\AdminBundle\Helper\Menu\TopMenuItem;
 use Kunstmaan\MediaBundle\Entity\Media;
 use Kunstmaan\MediaBundle\Entity\Folder;
@@ -32,12 +32,12 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
     /**
      * In this method you can add children for a specific parent, but also remove and change the already created children
      *
-     * @param MenuBuilder $menu      The MenuBuilder
+     * @param OldMenuBuilder $menu      The MenuBuilder
      * @param MenuItem[]  &$children The current children
      * @param MenuItem    $parent    The parent Menu item
      * @param Request     $request   The Request
      */
-    public function adaptChildren(MenuBuilder $menu, array &$children, MenuItem $parent = null, Request $request = null)
+    public function adaptChildren(OldMenuBuilder $menu, array &$children, MenuItem $parent = null, Request $request = null)
     {
 
         $mediaRoutes = array(

@@ -16,6 +16,11 @@ services:
     kunstmaan_media.media_manager:
         class: "%kunstmaan_media.media_manager.class%"
 
+    kunstmaan_media.configure_top_menu_listener:
+        class: Kunstmaan\MediaBundle\EventListener\ConfigureTopMenuListener
+        tags:
+            - { name: 'kernel.event_listener', event: 'kunstmaan_admin.configureTopMenu', method: 'onTopMenuConfigure' }
+
     kunstmaan_media.menu.adaptor:
         class: "%kunstmaan_media.menu.adaptor.class%"
         arguments: ["@doctrine.orm.entity_manager"]
