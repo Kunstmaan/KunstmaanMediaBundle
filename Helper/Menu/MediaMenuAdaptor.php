@@ -4,7 +4,7 @@ namespace Kunstmaan\MediaBundle\Helper\Menu;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
-use Kunstmaan\AdminBundle\Helper\Menu\MenuItem;
+use Kunstmaan\AdminBundle\Helper\Menu\OldMenuItem;
 use Kunstmaan\AdminBundle\Helper\Menu\MenuAdaptorInterface;
 use Kunstmaan\AdminBundle\Helper\Menu\OldMenuBuilder;
 use Kunstmaan\AdminBundle\Helper\Menu\TopMenuItem;
@@ -33,11 +33,11 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
      * In this method you can add children for a specific parent, but also remove and change the already created children
      *
      * @param OldMenuBuilder $menu      The MenuBuilder
-     * @param MenuItem[]  &$children The current children
-     * @param MenuItem    $parent    The parent Menu item
+     * @param OldMenuItem[]  &$children The current children
+     * @param OldMenuItem    $parent    The parent Menu item
      * @param Request     $request   The Request
      */
-    public function adaptChildren(OldMenuBuilder $menu, array &$children, MenuItem $parent = null, Request $request = null)
+    public function adaptChildren(OldMenuBuilder $menu, array &$children, OldMenuItem $parent = null, Request $request = null)
     {
 
         $mediaRoutes = array(
@@ -130,7 +130,7 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
             }
 
             foreach ($galleries as $folder) {
-                $menuitem = new MenuItem($menu);
+                $menuitem = new OldMenuItem($menu);
                 $menuitem->setRoute('KunstmaanMediaBundle_folder_show');
                 $menuitem->setRouteparams(array('folderId' => $folder->getId()));
                 $menuitem->setInternalname($folder->getName());
@@ -152,7 +152,7 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
             }
 
             foreach ($allRoutes as $name => $route) {
-                $menuitem = new MenuItem($menu);
+                $menuitem = new OldMenuItem($menu);
                 $menuitem->setRoute($route);
                 $menuitem->setInternalname($name);
                 $menuitem->setParent($parent);

@@ -16,10 +16,10 @@ services:
     kunstmaan_media.media_manager:
         class: "%kunstmaan_media.media_manager.class%"
 
-    kunstmaan_media.configure_top_menu_listener:
-        class: Kunstmaan\MediaBundle\EventListener\ConfigureTopMenuListener
+    kunstmaan_media.configure_menu_listener:
+        class: Kunstmaan\MediaBundle\EventListener\ConfigureMenuListener
         tags:
-            - { name: 'kernel.event_listener', event: 'kunstmaan_admin.configureTopMenu', method: 'onTopMenuConfigure' }
+            - { name: 'kernel.event_listener', event: 'kunstmaan_admin.configureMenu', method: 'onMenuConfigure' }
 
     kunstmaan_media.menu.adaptor:
         class: "%kunstmaan_media.menu.adaptor.class%"
