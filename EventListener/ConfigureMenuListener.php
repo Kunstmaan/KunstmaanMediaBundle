@@ -17,6 +17,7 @@ class ConfigureMenuListener
         $menu = $event->getMenu();
         $factory = $event->getFactory();
 
-        $menu->addChild($factory->createItem('Media', array('route' => 'KunstmaanMediaBundle_folder_show', 'routeParameters' => array('folderId' => '1'))));
+        $mediaMenu = $menu->addChild($factory->createItem('Media', array('route' => 'KunstmaanMediaBundle_folder_show', 'routeParameters' => array('folderId' => '1'))));
+        $mediaMenu->setExtra('folderId', '1');
     }
 }
