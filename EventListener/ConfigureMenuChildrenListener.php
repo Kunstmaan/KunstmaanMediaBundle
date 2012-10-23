@@ -34,15 +34,12 @@ class ConfigureMenuChildrenListener
             $menuParentNames[] = $parent->getName();
         }
         if ('Media' == $event->getMenu()->getName() or in_array('Media', $menuParentNames)) {
-            $currentFolderId = $this->request->get('folderId');
-            if (isset($currentFolderId)) {
-                $menuFolderId = $event->getMenu()->getExtra('folderId');
-                $menuFolder = $this->em->getRepository('KunstmaanMediaBundle:Folder')->findOneById($menuFolderId);
-                foreach ($menuFolder->getChildren() as $child) {
-                    $childMenu = $event->getMenu()->addChild($event->getFactory()->createItem($child->getName(), array('route' => 'KunstmaanMediaBundle_folder_show', 'routeParameters' => array('folderId' =>  $child->getId()))));
-                    $childMenu->setExtra('folderId', $child->getId());
-                    $childMenu->setAttribute('rel', $child->getRel());
-                }
+            $menuFolderId = $event->getMenu()->getExtra('folderId');
+            $menuFolder = $this->em->getRepository('KunstmaanMediaBundle:Folder')->findOneById($menuFolderId);
+            foreach ($menuFolder->getChildren() as $child) {
+                $childMenu = $event->getMenu()->addChild($event->getFactory()->createItem($child->getName(), array('route' => 'KunstmaanMediaBundle_folder_show', 'routeParameters' => array('folderId' =>  $child->getId()))));
+                $childMenu->setExtra('folderId', $child->getId());
+                $childMenu->setAttribute('rel', $child->getRel());
             }
         }
     }
