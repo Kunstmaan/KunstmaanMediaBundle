@@ -43,6 +43,7 @@ class ConfigureMenuChildrenListener
                     foreach ($menuFolder->getChildren() as $child) {
                         $childMenu = $event->getMenu()->addChild($event->getFactory()->createItem($child->getName(), array('route' => 'KunstmaanMediaBundle_folder_show', 'routeParameters' => array('folderId' =>  $child->getId()))));
                         $childMenu->setExtra('folderId', $child->getId());
+                        $childMenu->setAttribute('rel', $child->getRel());
                     }
                 }
             }
