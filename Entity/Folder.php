@@ -57,6 +57,7 @@ class Folder extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="Media", mappedBy="gallery")
+     * @ORM\OrderBy({"updatedAt" = "DESC"})
      */
     protected $files;
 
