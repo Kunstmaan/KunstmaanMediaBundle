@@ -3,6 +3,7 @@
 namespace Kunstmaan\MediaBundle\EventListener;
 
 use Kunstmaan\AdminBundle\Event\ConfigureMenuChildrenEvent;
+use Doctrine\ORM\EntityManager;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,19 +15,32 @@ class ConfigureMenuChildrenListener
      */
     private $request;
 
+    /**
+     * @var EntityManager
+     */
     private $em;
 
-    public function __construct(Request $request, $em)
+    /**
+     * @param Request           $request
+     * @param EntityManager     $em
+     */
+    public function __construct(Request $request, EntityManager $em)
     {
         $this->request = $request;
         $this->em = $em;
     }
 
+    /**
+     * @return Request
+     */
     public function getRequest()
     {
         return $this->request;
     }
 
+    /**
+     * @param ConfigureMenuChildrenEvent $event
+     */
     public function onMenuChildrenConfigure(ConfigureMenuChildrenEvent $event)
     {
         $menuParentNames = array();
