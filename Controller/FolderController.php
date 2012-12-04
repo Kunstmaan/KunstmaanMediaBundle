@@ -61,11 +61,14 @@ class FolderController extends Controller
 
         /* @var Folder $folder */
         $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
-        $parentGallery = $folder->getParent();
+        $foldername = $folder->getName();
+        $parentFolder = $folder->getParent();
 
         $em->getRepository('KunstmaanMediaBundle:Folder')->delete($folder);
 
-        return new RedirectResponse($this->generateUrl('KunstmaanMediaBundle_folder_show', array('folderId'  => $parentGallery->getId())));
+        $this->get('session')->getFlashBag()->add('success', 'Folder \''.$foldername.'\' has been deleted!');
+
+        return new RedirectResponse($this->generateUrl('KunstmaanMediaBundle_folder_show', array('folderId'  => $parentFolder->getId())));
     }
 
     /**
@@ -91,6 +94,8 @@ class FolderController extends Controller
             $form->bind($request);
             if ($form->isValid()) {
                 $em->getRepository('KunstmaanMediaBundle:Folder')->save($folder);
+
+                $this->get('session')->getFlashBag()->add('success', 'Folder \''.$folder->getName().'\' has been created!');
 
                 return new RedirectResponse($this->generateUrl('KunstmaanMediaBundle_folder_show', array('folderId' => $folder->getId())));
             }

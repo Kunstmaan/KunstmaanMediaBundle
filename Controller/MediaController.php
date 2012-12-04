@@ -77,9 +77,12 @@ class MediaController extends Controller
 
         /* @var Media $media */
         $media = $em->getRepository('KunstmaanMediaBundle:Media')->getMedia($mediaId);
+        $medianame = $media->getName();
         $folder = $media->getFolder();
 
         $em->getRepository('KunstmaanMediaBundle:Media')->delete($media);
+
+        $this->get('session')->getFlashBag()->add('success', 'Media \''.$medianame.'\' has been deleted!');
 
         return new RedirectResponse($this->generateUrl('KunstmaanMediaBundle_folder_show', array('folderId'  => $folder->getId())));
     }
@@ -92,8 +95,6 @@ class MediaController extends Controller
      * @Template()
      *
      * @return array|RedirectResponse
-     *
-     * @throws \InvalidArgumentException when the gallery does not support bulk upload
      */
     public function bulkUploadAction($folderId)
     {
@@ -113,9 +114,11 @@ class MediaController extends Controller
                 foreach ($helper->getFiles() as $file) {
                     /* @var Media $media */
                     $media = $this->get('kunstmaan_media.media_manager')->getHandler($file)->createNew($file);
-                    $media->setGallery($folder);
+                    $media->setFolder($folder);
                     $em->getRepository('KunstmaanMediaBundle:Media')->save($media);
                 }
+
+                $this->get('session')->getFlashBag()->add('success', 'New media has been uploaded!');
 
                 return new RedirectResponse($this->generateUrl('KunstmaanMediaBundle_folder_show', array('folderId'  => $folder->getId())));
             }
@@ -139,8 +142,6 @@ class MediaController extends Controller
      * @Method({"GET", "POST"})
      *
      * @return array|RedirectResponse
-     *
-     * @throws \InvalidArgumentException when the gallery does not support bulk upload
      */
     public function dropAction($folderId)
     {
@@ -200,6 +201,8 @@ class MediaController extends Controller
                 $media = $helper->getMedia();
                 $media->setFolder($folder);
                 $em->getRepository('KunstmaanMediaBundle:Media')->save($media);
+
+                $this->get('session')->getFlashBag()->add('success', 'Media \''.$media->getName().'\' has been created!');
 
                 return new RedirectResponse($this->generateUrl('KunstmaanMediaBundle_folder_show', array('folderId'  => $folder->getId())));
             }
