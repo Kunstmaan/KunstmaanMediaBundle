@@ -1,6 +1,5 @@
 parameters:
     kunstmaan_media.media_manager.class: 'Kunstmaan\MediaBundle\Helper\MediaManager'
-    kunstmaan_media.menu.adaptor.class: 'Kunstmaan\MediaBundle\Helper\Menu\MediaMenuAdaptor'
     kunstmaan_media.listener.doctrine.class: 'Kunstmaan\MediaBundle\EventListener\DoctrineMediaListener'
     kunstmaan_media.form.type.media.class: 'Kunstmaan\MediaBundle\Form\Type\MediaType'
 
@@ -16,12 +15,20 @@ services:
     kunstmaan_media.media_manager:
         class: "%kunstmaan_media.media_manager.class%"
 
-    kunstmaan_media.menu.adaptor:
-        class: "%kunstmaan_media.menu.adaptor.class%"
-        arguments: ["@doctrine.orm.entity_manager"]
+    kunstmaan_media.configure_menu_listener:
+        class: Kunstmaan\MediaBundle\EventListener\ConfigureMenuListener
+        arguments: ["@request"]
+        scope: request
         tags:
-            -  { name: 'kunstmaan_admin.menu.adaptor' }
-            
+            - { name: 'kernel.event_listener', event: 'kunstmaan_admin.configureMenu', method: 'onMenuConfigure' }
+
+    kunstmaan_media.configure_menu_children_listener:
+        class: Kunstmaan\MediaBundle\EventListener\ConfigureMenuChildrenListener
+        arguments: ["@request", "@doctrine.orm.entity_manager"]
+        scope: request
+        tags:
+            - { name: 'kernel.event_listener', event: 'kunstmaan_admin.configureMenuChildren', method: 'onMenuChildrenConfigure' }
+
     kunstmaan_media.listener.doctrine:
         class: "%kunstmaan_media.listener.doctrine.class%"
         arguments: ["@kunstmaan_media.media_manager"]
