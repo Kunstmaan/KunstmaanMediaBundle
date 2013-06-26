@@ -6,7 +6,6 @@ use Kunstmaan\MediaBundle\Helper\File\FileHandler;
 use Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler;
 
 use Kunstmaan\MediaBundle\Entity\Media;
-use Kunstmaan\MediaBundle\Helper\File\FileHandler;
 
 /**
  * MediaManager
