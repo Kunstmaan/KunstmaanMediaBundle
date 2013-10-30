@@ -15,7 +15,7 @@
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": ">=2.2,<2.3",
-        "doctrine/doctrine-fixtures-bundle": "2.1.*",
+        "doctrine/doctrine-fixtures-bundle": "2.1.*@dev",
         "stof/doctrine-extensions-bundle": "dev-master",
         "liip/imagine-bundle": "*",
         "knplabs/knp-gaufrette-bundle": "*",
@@ -23,6 +23,11 @@
         "sensio/framework-extra-bundle": "*",
         "kunstmaan/admin-bundle": "2.2.*",
         "kunstmaan/utilities-bundle": "2.2.*"
+    },
+    "require-dev": {
+        "white-october/pagerfanta-bundle": "dev-master",
+        "pagerfanta/pagerfanta": "dev-master",
+        "friendsofsymfony/user-bundle": "2.0.*@dev"
     },
     "autoload": {
         "psr-0": { "Kunstmaan\\MediaBundle": "" }
