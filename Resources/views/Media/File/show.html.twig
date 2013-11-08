@@ -11,5 +11,5 @@
 {% block mediainfo %}
     {{ parent() }}
     <dt>{{ 'media.media.mediainfo.downloadlink'|trans }}:</dt>
-    	<dd><a href="{{ app.request.getScheme()~'://'~app.request.getHttpHost()~asset(media.url) }}" target="_blank">{{ app.request.getScheme()~'://'~app.request.getHttpHost()~asset(media.url) }}</a></dd>
+    	<dd><a href="{{ app.request.schemeandhttphost ~ app.request.basePath ~ asset(media.url) }}" target="_blank">{{ app.request.schemeandhttphost ~ app.request.basePath ~ asset(media.url) }}</a></dd>
 {% endblock %}
