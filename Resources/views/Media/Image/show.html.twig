@@ -36,5 +36,5 @@
 {% endblock %}
 
 {% block preview %}
-    <p><img id="editimage" class="thumbnail" src="{{ handler.getImageUrl(media, app.request.basePath) | imagine_filter('media_detail_thumbnail') }}" alt="{{ media.name }}" /></p>
+    <p><img id="editimage" class="thumbnail" src="{{ handler.getImageUrl(media, "") | imagine_filter('media_detail_thumbnail') }}" alt="{{ media.name }}" /></p>
 {% endblock %}
