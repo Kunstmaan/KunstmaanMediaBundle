@@ -21,7 +21,8 @@
         "gedmo/doctrine-extensions": "*",
         "sensio/framework-extra-bundle": "*",
         "kunstmaan/admin-bundle": "2.3.*",
-        "kunstmaan/utilities-bundle": "2.3.*"
+        "kunstmaan/utilities-bundle": "2.3.*",
+        "kunstmaan/adminlist-bundle": "2.3.*"
     },
     "require-dev": {
         "doctrine/data-fixtures": "1.0.*@dev",

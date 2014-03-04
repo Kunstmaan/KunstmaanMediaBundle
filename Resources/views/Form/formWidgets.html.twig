@@ -1,6 +1,6 @@
 {% block media_widget %}
 {% spaceless %}
-	<div id="{{ id }}_widget" class="clearfix">
+	<div id="{{ id }}_widget" class="clearfix {{ attr.class|default('') }}" style="{{ attr.style|default('') }}">
 		<input type="hidden" name="{{ full_name }}" value="{% if(value.id is defined) %}{{ value.id }}{% endif %}"/>
 
 		<div class="input_media hasnomedia">
@@ -32,6 +32,15 @@
 				<p class="title"></p>
 			{% endif %}
 		</div>
+
+        {% if attr['info_media'] is defined %}
+            &nbsp; <strong title="{{ attr['info_media']|trans }}" id="{{ id }}_info_media" style="cursor:help;">?</strong>
+            <script>
+                jQuery(document).ready(function(){
+                    $("#{{ id }}_info_media").tooltip();
+                });
+            </script>
+        {% endif %}
 	</div>
 
 	<script type="text/javascript">

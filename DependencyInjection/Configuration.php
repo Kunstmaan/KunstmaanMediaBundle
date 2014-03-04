@@ -22,6 +22,12 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('kunstmaan_media');
 
+        $rootNode
+            ->children()
+                ->scalarNode('soundcloud_api_key')->defaultValue('YOUR_CLIENT_ID')->end()
+            ->end();
+
+
         return $treeBuilder;
     }
 }
