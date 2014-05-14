@@ -56,6 +56,7 @@ class Folder extends AbstractEntity
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Media", mappedBy="folder")
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $media;
 
@@ -104,6 +105,14 @@ class Folder extends AbstractEntity
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
         $this->deleted = false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTranslatableLocale()
+    {
+        return $this->locale;
     }
 
     /**
@@ -309,7 +318,7 @@ class Folder extends AbstractEntity
     /**
      * @param bool $includeDeleted
      *
-     * @return Folder[]
+     * @return ArrayCollection
      */
     public function getChildren($includeDeleted = false)
     {
@@ -329,7 +338,7 @@ class Folder extends AbstractEntity
     }
 
     /**
-     * @param array $children
+     * @param ArrayCollection $children
      *
      * @return Folder
      */

@@ -28,8 +28,9 @@ class ChooserController extends Controller
      */
     public function chooserIndexAction(Request $request)
     {
-        $em      = $this->getDoctrine()->getManager();
-        $session = $request->getSession();
+        $em       = $this->getDoctrine()->getManager();
+        $session  = $request->getSession();
+        $folderId = false;
 
         $type            = $request->get('type');
         $cKEditorFuncNum = $request->get('CKEditorFuncNum');
@@ -39,7 +40,9 @@ class ChooserController extends Controller
         // Go to the last visited folder
         if ($session->get('last-media-folder')) {
             try {
-                $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($session->get('last-media-folder'));
+                $folder   = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder(
+                    $session->get('last-media-folder')
+                );
                 $folderId = $session->get('last-media-folder');
             } catch (EntityNotFoundException $e) {
                 $folderId = false;
@@ -54,10 +57,10 @@ class ChooserController extends Controller
         }
 
         $params = array(
-          'folderId'        => $folderId,
-          'type'            => $type,
-          'CKEditorFuncNum' => $cKEditorFuncNum,
-          'linkChooser'     => $linkChooser
+            'folderId'        => $folderId,
+            'type'            => $type,
+            'CKEditorFuncNum' => $cKEditorFuncNum,
+            'linkChooser'     => $linkChooser
         );
 
         return $this->redirect($this->generateUrl('KunstmaanMediaBundle_chooser_show_folder', $params));
@@ -125,19 +128,19 @@ class ChooserController extends Controller
         }
 
         return array(
-          'cKEditorFuncNum' => $cKEditorFuncNum,
-          'linkChooser'     => $linkChooser,
-          'linkChooserLink' => $linkChooserLink,
-          'mediamanager'    => $mediaHandler,
-          'handler'         => $handler,
-          'type'            => $type,
-          'folder'          => $folder,
-          'folders'         => $folders,
-          'adminlist'       => $adminList,
-          'fileform'        => $this->createTypeFormView($mediaHandler, "file"),
-          'videoform'       => $this->createTypeFormView($mediaHandler, "video"),
-          'slideform'       => $this->createTypeFormView($mediaHandler, "slide"),
-          'audioform'       => $this->createTypeFormView($mediaHandler, "audio")
+            'cKEditorFuncNum' => $cKEditorFuncNum,
+            'linkChooser'     => $linkChooser,
+            'linkChooserLink' => $linkChooserLink,
+            'mediamanager'    => $mediaHandler,
+            'handler'         => $handler,
+            'type'            => $type,
+            'folder'          => $folder,
+            'folders'         => $folders,
+            'adminlist'       => $adminList,
+            'fileform'        => $this->createTypeFormView($mediaHandler, 'file'),
+            'videoform'       => $this->createTypeFormView($mediaHandler, 'video'),
+            'slideform'       => $this->createTypeFormView($mediaHandler, 'slide'),
+            'audioform'       => $this->createTypeFormView($mediaHandler, 'audio')
         );
     }
 
