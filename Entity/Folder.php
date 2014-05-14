@@ -56,6 +56,7 @@ class Folder extends AbstractEntity
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Media", mappedBy="folder")
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $media;
 
