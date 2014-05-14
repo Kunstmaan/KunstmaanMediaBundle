@@ -123,7 +123,8 @@ class MediaController extends Controller
     }
 
     /**
-     * @param int $folderId
+     * @param Request $request
+     * @param int     $folderId
      *
      * @Route("bulkuploadsubmit/{folderId}", requirements={"folderId" = "\d+"}, name="KunstmaanMediaBundle_media_bulk_upload_submit")
      * @Template()

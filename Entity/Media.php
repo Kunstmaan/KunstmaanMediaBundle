@@ -465,11 +465,20 @@ class Media extends AbstractEntity
     }
 
     /**
+     * @ORM\PrePersist
+     */
+    public function preInsert()
+    {
+        if (empty($this->name)) {
+            $this->setName($this->getOriginalFilename());
+        }
+    }
+
+    /**
      * @ORM\PreUpdate
      */
     public function preUpdate()
     {
         $this->setUpdatedAt(new \DateTime());
     }
-
 }
