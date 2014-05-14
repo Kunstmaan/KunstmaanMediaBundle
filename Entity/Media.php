@@ -465,17 +465,6 @@ class Media extends AbstractEntity
     }
 
     /**
-     * @return string
-     */
-    public function getClassType()
-    {
-        $class = explode('\\', get_class($this));
-        $classname = end($class);
-
-        return $classname;
-    }
-
-    /**
      * @ORM\PreUpdate
      */
     public function preUpdate()

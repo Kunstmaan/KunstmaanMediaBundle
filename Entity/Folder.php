@@ -317,7 +317,7 @@ class Folder extends AbstractEntity
     /**
      * @param bool $includeDeleted
      *
-     * @return Folder[]
+     * @return ArrayCollection
      */
     public function getChildren($includeDeleted = false)
     {
@@ -337,7 +337,7 @@ class Folder extends AbstractEntity
     }
 
     /**
-     * @param array $children
+     * @param ArrayCollection $children
      *
      * @return Folder
      */

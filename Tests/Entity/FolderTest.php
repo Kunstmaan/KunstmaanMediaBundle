@@ -1,6 +1,7 @@
 <?php
 namespace Kunstmaan\MediaBundle\Tests\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Kunstmaan\MediaBundle\Entity\Folder;
 use Kunstmaan\MediaBundle\Entity\Media;
 
@@ -27,11 +28,13 @@ class FolderTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Kunstmaan\MediaBundle\Entity\Folder::getName
      * @covers Kunstmaan\MediaBundle\Entity\Folder::setName
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::__toString
      */
     public function testGetSetName()
     {
-        $this->object->setName('abc');
-        $this->assertEquals('abc', $this->object->getName());
+        $this->object->setName('name');
+        $this->assertEquals('name', $this->object->getName());
+        $this->assertEquals('name', $this->object->__toString());
     }
 
     /**
@@ -40,8 +43,8 @@ class FolderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSetRel()
     {
-        $this->object->setRel('bcd');
-        $this->assertEquals('bcd', $this->object->getRel());
+        $this->object->setRel('rel');
+        $this->assertEquals('rel', $this->object->getRel());
     }
 
     /**
@@ -175,15 +178,20 @@ class FolderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers Kunstmaan\MediaBundle\Entity\Folder::getChildren
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::setChildren
      */
-    public function testGetChildren()
+    public function testGetSetChildren()
     {
         $child = new Folder();
-        $this->object->addChild($child);
 
         $deletedChild = new Folder();
         $deletedChild->setDeleted(true);
-        $this->object->addChild($deletedChild);
+
+        $children = new ArrayCollection();
+        $children->add($child);
+        $children->add($deletedChild);
+
+        $this->object->setChildren($children);
 
         $this->assertCount(1, $this->object->getChildren());
         $this->assertCount(1, $this->object->getChildren(false));
@@ -208,18 +216,29 @@ class FolderTest extends \PHPUnit_Framework_TestCase
 
         $subFolder = new Folder();
         $subFolder->setId(2);
-        $subFolder->setParent($root);
+        $root->addChild($subFolder);
 
         $subFolder2 = new Folder();
         $subFolder2->setId(4);
-        $subFolder2->setParent($root);
+        $root->addChild($subFolder2);
 
         $subSubFolder = new Folder();
         $subSubFolder->setId(3);
-        $subSubFolder->setParent($subFolder);
+        $subFolder->addChild($subSubFolder);
 
-        $this->assertTrue($subSubFolder->hasActive(2));
-        $this->assertFalse($subSubFolder->hasActive(4));
+        $this->assertTrue($root->hasActive(2));
+        $this->assertTrue($root->hasActive(4));
+        $this->assertTrue($subFolder->hasActive(3));
+        $this->assertFalse($subFolder->hasActive(4));
     }
 
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::getInternalName
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::setInternalName
+     */
+    public function testGetSetInternalName()
+    {
+        $this->object->setInternalName('internal_name');
+        $this->assertEquals('internal_name', $this->object->getInternalName());
+    }
 }

@@ -40,7 +40,9 @@ class ChooserController extends Controller
         // Go to the last visited folder
         if ($session->get('last-media-folder')) {
             try {
-                $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($session->get('last-media-folder'));
+                $folder   = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder(
+                    $session->get('last-media-folder')
+                );
                 $folderId = $session->get('last-media-folder');
             } catch (EntityNotFoundException $e) {
                 $folderId = false;
@@ -135,10 +137,10 @@ class ChooserController extends Controller
             'folder'          => $folder,
             'folders'         => $folders,
             'adminlist'       => $adminList,
-            'fileform'        => $this->createTypeFormView($mediaHandler, "file"),
-            'videoform'       => $this->createTypeFormView($mediaHandler, "video"),
-            'slideform'       => $this->createTypeFormView($mediaHandler, "slide"),
-            'audioform'       => $this->createTypeFormView($mediaHandler, "audio")
+            'fileform'        => $this->createTypeFormView($mediaHandler, 'file'),
+            'videoform'       => $this->createTypeFormView($mediaHandler, 'video'),
+            'slideform'       => $this->createTypeFormView($mediaHandler, 'slide'),
+            'audioform'       => $this->createTypeFormView($mediaHandler, 'audio')
         );
     }
 
