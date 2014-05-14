@@ -92,6 +92,12 @@ class Media extends AbstractEntity
      */
     protected $url;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true, name="original_filename")
+     */
+    protected $originalFilename;
 
     /**
      * @var bool
@@ -436,6 +442,26 @@ class Media extends AbstractEntity
         $this->url = $url;
 
         return $this;
+    }
+
+    /**
+     * @param string $originalFilename
+     *
+     * @return Media
+     */
+    public function setOriginalFilename($originalFilename)
+    {
+        $this->originalFilename = $originalFilename;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalFilename()
+    {
+        return $this->originalFilename;
     }
 
     /**

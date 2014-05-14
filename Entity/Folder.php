@@ -107,6 +107,14 @@ class Folder extends AbstractEntity
     }
 
     /**
+     * @return string
+     */
+    public function getTranslatableLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
      * @param string $locale
      *
      * @return Folder

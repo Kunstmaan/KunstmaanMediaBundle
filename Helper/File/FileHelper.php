@@ -55,6 +55,22 @@ class FileHelper
     }
 
     /**
+     * @return string
+     */
+    public function getOriginalFilename()
+    {
+        return $this->media->getOriginalFilename();
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setOriginalFilename($name)
+    {
+        $this->media->setOriginalFilename($name);
+    }
+
+    /**
      * @return UploadedFile
      */
     public function getFile()

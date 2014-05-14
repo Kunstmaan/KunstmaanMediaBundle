@@ -57,24 +57,24 @@ class FolderController extends Controller
         $editForm = $this->createForm(new FolderType($folder), $folder);
 
         if ($request->isMethod('POST')) {
-            $editForm->submit($request);
+            $editForm->handleRequest($request);
             if ($editForm->isValid()) {
                 $em->getRepository('KunstmaanMediaBundle:Folder')->save($folder);
 
                 $this->get('session')->getFlashBag()->add(
-                  'success',
-                  'Folder \'' . $folder->getName() . '\' has been updated!'
+                    'success',
+                    'Folder \'' . $folder->getName() . '\' has been updated!'
                 );
             }
         }
 
         return array(
-          'mediamanager' => $this->get('kunstmaan_media.media_manager'),
-          'subform'      => $subForm->createView(),
-          'editform'     => $editForm->createView(),
-          'folder'       => $folder,
-          'folders'      => $folders,
-          'adminlist'    => $adminList
+            'mediamanager' => $this->get('kunstmaan_media.media_manager'),
+            'subform'      => $subForm->createView(),
+            'editform'     => $editForm->createView(),
+            'folder'       => $folder,
+            'folders'      => $folders,
+            'adminlist'    => $adminList
         );
     }
 
@@ -96,8 +96,8 @@ class FolderController extends Controller
 
         if (empty($parentFolder)) {
             $this->get('session')->getFlashBag()->add(
-              'failure',
-              'You can\'t delete the \'' . $folderName . '\' folder!'
+                'failure',
+                'You can\'t delete the \'' . $folderName . '\' folder!'
             );
         } else {
             $folder->setDeleted(true);
@@ -108,8 +108,8 @@ class FolderController extends Controller
         }
 
         return new RedirectResponse($this->generateUrl(
-          'KunstmaanMediaBundle_folder_show',
-          array('folderId' => $folderId)
+            'KunstmaanMediaBundle_folder_show',
+            array('folderId' => $folderId)
         ));
     }
 
@@ -133,32 +133,32 @@ class FolderController extends Controller
         $folder->setParent($parent);
         $form = $this->createForm(new FolderType(), $folder);
         if ($request->isMethod('POST')) {
-            $form->submit($request);
+            $form->handleRequest($request);
             if ($form->isValid()) {
                 $em->getRepository('KunstmaanMediaBundle:Folder')->save($folder);
 
                 $this->get('session')->getFlashBag()->add(
-                  'success',
-                  'Folder \'' . $folder->getName() . '\' has been created!'
+                    'success',
+                    'Folder \'' . $folder->getName() . '\' has been created!'
                 );
 
                 return new Response('<script>window.location="' . $this->generateUrl(
-                    'KunstmaanMediaBundle_folder_show',
-                    array('folderId' => $folder->getId())
-                  ) . '"</script>');
+                        'KunstmaanMediaBundle_folder_show',
+                        array('folderId' => $folder->getId())
+                    ) . '"</script>');
             }
         }
 
         $galleries = $em->getRepository('KunstmaanMediaBundle:Folder')->getAllFolders();
 
         return $this->render(
-          'KunstmaanMediaBundle:Folder:addsub-modal.html.twig',
-          array(
-            'subform'   => $form->createView(),
-            'galleries' => $galleries,
-            'folder'    => $folder,
-            'parent'    => $parent
-          )
+            'KunstmaanMediaBundle:Folder:addsub-modal.html.twig',
+            array(
+                'subform'   => $form->createView(),
+                'galleries' => $galleries,
+                'folder'    => $folder,
+                'parent'    => $parent
+            )
         );
     }
 

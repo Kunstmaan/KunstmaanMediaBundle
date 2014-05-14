@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,29 +45,29 @@ class MediaController extends Controller
         $form = $this->createForm($handler->getFormType(), $helper);
 
         if ($request->isMethod('POST')) {
-            $form->submit($request);
+            $form->handleRequest($request);
             if ($form->isValid()) {
                 $media = $helper->getMedia();
                 $em->getRepository('KunstmaanMediaBundle:Media')->save($media);
 
                 return new RedirectResponse($this->generateUrl(
-                  'KunstmaanMediaBundle_media_show',
-                  array('mediaId' => $media->getId())
+                    'KunstmaanMediaBundle_media_show',
+                    array('mediaId' => $media->getId())
                 ));
             }
         }
         $showTemplate = $mediaManager->getHandler($media)->getShowTemplate($media);
 
         return $this->render(
-          $showTemplate,
-          array(
-            'handler'      => $handler,
-            'mediamanager' => $this->get('kunstmaan_media.media_manager'),
-            'editform'     => $form->createView(),
-            'media'        => $media,
-            'helper'       => $helper,
-            'folder'       => $folder
-          )
+            $showTemplate,
+            array(
+                'handler'      => $handler,
+                'mediamanager' => $this->get('kunstmaan_media.media_manager'),
+                'editform'     => $form->createView(),
+                'media'        => $media,
+                'helper'       => $helper,
+                'folder'       => $folder
+            )
         );
     }
 
@@ -95,8 +96,8 @@ class MediaController extends Controller
         $redirectUrl = $request->query->get('redirectUrl');
         if (empty($redirectUrl)) {
             $redirectUrl = $this->generateUrl(
-              'KunstmaanMediaBundle_folder_show',
-              array('folderId' => $folder->getId())
+                'KunstmaanMediaBundle_folder_show',
+                array('folderId' => $folder->getId())
             );
         }
 
@@ -129,7 +130,7 @@ class MediaController extends Controller
      *
      * @return array|RedirectResponse
      */
-    public function bulkUploadSubmitAction($folderId)
+    public function bulkUploadSubmitAction(Request $request, $folderId)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -231,7 +232,11 @@ class MediaController extends Controller
         $em->getRepository('KunstmaanMediaBundle:Media')->save($media);
 
         // Return Success JSON-RPC response
-        die('{"jsonrpc" : "2.0", "result" : "", "id" : "id"}');
+        return new JsonResponse(array(
+            'jsonrpc' => '2.0',
+            'result'  => '',
+            'id'      => 'id'
+        ));
     }
 
     /**
@@ -310,15 +315,15 @@ class MediaController extends Controller
         $form = $this->createForm($handler->getFormType(), $helper);
 
         if ($request->isMethod('POST')) {
-            $form->submit($request);
+            $form->handleRequest($request);
             if ($form->isValid()) {
                 $media = $helper->getMedia();
                 $media->setFolder($folder);
                 $em->getRepository('KunstmaanMediaBundle:Media')->save($media);
 
                 $this->get('session')->getFlashBag()->add(
-                  'success',
-                  'Media \'' . $media->getName() . '\' has been created!'
+                    'success',
+                    'Media \'' . $media->getName() . '\' has been created!'
                 );
 
                 $params = array('folderId' => $folder->getId());
@@ -329,9 +334,9 @@ class MediaController extends Controller
         }
 
         return array(
-          'type'   => $type,
-          'form'   => $form->createView(),
-          'folder' => $folder
+            'type'   => $type,
+            'form'   => $form->createView(),
+            'folder' => $folder
         );
     }
 
@@ -360,11 +365,11 @@ class MediaController extends Controller
         }
 
         return $this->createAndRedirect(
-          $request,
-          $folderId,
-          $type,
-          'KunstmaanMediaBundle_chooser_show_folder',
-          $extraParams
+            $request,
+            $folderId,
+            $type,
+            'KunstmaanMediaBundle_chooser_show_folder',
+            $extraParams
         );
     }
 
