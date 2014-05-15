@@ -22,11 +22,6 @@ class MigrateMediaCommand extends ContainerAwareCommand
             );
     }
 
-    public function setEntityManager(EntityManager $em)
-    {
-        $this->em = $em;
-    }
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Migrating media...');
