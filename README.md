@@ -52,6 +52,8 @@ in the path of the user that is executing the code (apache/www or a custom user 
 
 You can determine that path by running ```which gs``` on the command line in Linux/OS X.
 
+To install Ghostscript on Mac OS X you can use ```brew install gs```.
+
 On OS X with apache you will probably have to add that path to the apache environment settings in
 ```/System/Library/LaunchDaemons/org.apache.httpd.plist```. Make sure it contains the following :
 ```

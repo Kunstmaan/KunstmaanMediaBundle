@@ -2,8 +2,8 @@
 
 namespace Kunstmaan\MediaBundle\Helper\File;
 
-use Imagick;
 use Kunstmaan\MediaBundle\Entity\Media;
+use Kunstmaan\MediaBundle\Helper\Transformer\PreviewTransformerInterface;
 
 /**
  * Custom handler for PDF files (display thumbnails if imagemagick is enabled and has PDF support)
@@ -12,7 +12,11 @@ class PdfHandler extends FileHandler
 {
     const TYPE = 'pdf';
 
-    protected $mediaPath;
+    /** @var string */
+    protected $webPath;
+
+    /** @var PreviewTransformerInterface */
+    protected $pdfTransformer;
 
     /**
      * Inject the root dir so we know the full path where we need to store the file.
@@ -23,7 +27,23 @@ class PdfHandler extends FileHandler
     {
         parent::setMediaPath($kernelRootDir);
 
-        $this->mediaPath = realpath($kernelRootDir . '/../web/uploads/media'). DIRECTORY_SEPARATOR;
+        $this->setWebPath(realpath(str_replace('/', DIRECTORY_SEPARATOR, $kernelRootDir . '/../web/')) . DIRECTORY_SEPARATOR);
+    }
+
+    /**
+     * @param string $webPath
+     */
+    public function setWebPath($webPath)
+    {
+        $this->webPath = $webPath;
+    }
+
+    /**
+     * @param PreviewTransformerInterface $pdfTransformer
+     */
+    public function setPdfTransformer(PreviewTransformerInterface $pdfTransformer)
+    {
+        $this->pdfTransformer = $pdfTransformer;
     }
 
     /**
@@ -42,25 +62,11 @@ class PdfHandler extends FileHandler
     public function canHandle($object)
     {
         if (parent::canHandle($object) &&
-            ($object instanceof Media && $object->getContentType() == 'application/pdf') &&
-            $this->canCreatePdfThumbnails()
-        ) {
+            ($object instanceof Media && $object->getContentType() == 'application/pdf')) {
             return true;
         }
 
         return false;
-    }
-
-    private function canCreatePdfThumbnails()
-    {
-        if (!extension_loaded('imagick') || !class_exists('Imagick')) {
-            return false;
-        }
-
-        $imagick = new Imagick();
-        $pdfSupport = $imagick->queryFormats('PDF');
-
-        return in_array('PDF', $pdfSupport);
     }
 
     /**
@@ -70,8 +76,12 @@ class PdfHandler extends FileHandler
     {
         parent::saveMedia($media);
 
-        // Generate preview for PDF
-        $this->createJpgPreview($media);
+        try {
+            // Generate preview for PDF
+            $this->pdfTransformer->apply($this->webPath . $media->getUrl());
+        } catch(\ImagickException $e) {
+            // Fail silently ()
+        }
     }
 
     /**
@@ -82,26 +92,11 @@ class PdfHandler extends FileHandler
      */
     public function getImageUrl(Media $media, $basepath)
     {
-        $pathParts = pathinfo($media->getUrl());
-
-        return $basepath . $pathParts['dirname'] . DIRECTORY_SEPARATOR . $pathParts['filename'] . '.jpg';
-    }
-
-    /**
-     * @param $media
-     */
-    public function createJpgPreview(Media $media)
-    {
-        $previewFilename = $this->mediaPath . $media->getUuid() . '.jpg';
-
-        if (file_exists($previewFilename)) {
-            return;
+        $filename = $this->pdfTransformer->getPreviewFilename($basepath . $media->getUrl());
+        if (!file_exists($this->webPath . $filename)) {
+            return null;
         }
 
-        $preview = new Imagick($this->mediaPath . $media->getUuid() . '.pdf[0]');
-        $preview->setImageFormat('jpg');
-        $preview = $preview->flattenImages();
-        $preview->writeImage($previewFilename);
+        return $filename;
     }
-
 }

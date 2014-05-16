@@ -43,5 +43,6 @@ services:
         class: "%kunstmaan_media.media_handler.pdf.class%"
         calls:
             - [ setMediaPath, [ "%kernel.root_dir%" ] ]
+            - [ setPdfTransformer, [ "@kunstmaan_media.pdf_transformer" ]]
         tags:
             -  { name: 'kunstmaan_media.media_handler' }

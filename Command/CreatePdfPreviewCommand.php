@@ -25,6 +25,9 @@ class CreatePdfPreviewCommand extends ContainerAwareCommand
     {
         $output->writeln('Creating PDF preview images...');
 
+        $pdfTransformer = $this->getContainer()->get('kunstmaan_media.pdf_transformer');
+        $webPath = realpath($this->getContainer()->get('kernel')->getRootDir() . '/../web') . DIRECTORY_SEPARATOR;
+
         /**
          * @var EntityManager
          */
@@ -32,18 +35,10 @@ class CreatePdfPreviewCommand extends ContainerAwareCommand
         $medias     = $em->getRepository('KunstmaanMediaBundle:Media')->findBy(
             array('contentType' => 'application/pdf', 'deleted' => false)
         );
-        $pdfHandler = $this->getContainer()->get('kunstmaan_media.media_handlers.pdf');
-
         /** @var Media $media */
-        try {
-            foreach ($medias as $media) {
-                $pdfHandler->createJpgPreview($media);
-            }
-            $output->writeln('<info>Missing PDF preview images have been created.</info>');
-        } catch (\Exception $e) {
-            $output->writeln(
-                'An error occured while creating PDF preview images : <error>' . $e->getMessage() . '</error>'
-            );
+        foreach ($medias as $media) {
+            $pdfTransformer->apply($webPath . $media->getUrl());
         }
+        $output->writeln('<info>PDF preview images have been created.</info>');
     }
 }
