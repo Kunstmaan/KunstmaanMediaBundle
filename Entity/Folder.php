@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Kunstmaan\AdminBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Tree\Node as GedmoNode;
 
 /**
  * Class that defines a folder from the MediaBundle in the database
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\FolderRepository")
  * @ORM\Table(name="kuma_folders")
  * @ORM\HasLifecycleCallbacks
+ * @Gedmo\Tree(type="nested")
  */
 class Folder extends AbstractEntity
 {
@@ -41,6 +43,7 @@ class Folder extends AbstractEntity
      *
      * @ORM\ManyToOne(targetEntity="Folder", inversedBy="children", fetch="EAGER")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
+     * @Gedmo\TreeParent
      */
     protected $parent;
 
@@ -87,6 +90,30 @@ class Folder extends AbstractEntity
      * @ORM\Column(type="string", name="internal_name", nullable=true)
      */
     protected $internalName;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="lft", type="integer", nullable=true)
+     * @Gedmo\TreeLeft
+     */
+    protected $lft;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="lvl", type="integer", nullable=true)
+     * @Gedmo\TreeLevel
+     */
+    protected $lvl;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="rgt", type="integer", nullable=true)
+     * @Gedmo\TreeRight
+     */
+    protected $rgt;
 
     /**
      * @var bool
@@ -403,6 +430,54 @@ class Folder extends AbstractEntity
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @param int $lft
+     */
+    public function setLft($lft)
+    {
+        $this->lft = $lft;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLft()
+    {
+        return $this->lft;
+    }
+
+    /**
+     * @param int $lvl
+     */
+    public function setLvl($lvl)
+    {
+        $this->lvl = $lvl;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLvl()
+    {
+        return $this->lvl;
+    }
+
+    /**
+     * @param int $rgt
+     */
+    public function setRgt($rgt)
+    {
+        $this->rgt = $rgt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRgt()
+    {
+        return $this->rgt;
     }
 
     /**
