@@ -78,7 +78,7 @@ class MigrateMediaCommand extends ContainerAwareCommand
                 `id`        char(36) NOT NULL DEFAULT '',
                 `parent_id` char(36)          DEFAULT NULL,
                 `lft`       int(11)  unsigned DEFAULT NULL,
-                `lvl`       int(11)  unsigned DEFAULT NULL,
+                `level`     int(11)  unsigned DEFAULT NULL,
                 `rgt`       int(11)  unsigned DEFAULT NULL,
                 PRIMARY KEY      (`id`),
                 INDEX USING HASH (`parent_id`),
@@ -88,26 +88,26 @@ class MigrateMediaCommand extends ContainerAwareCommand
             SELECT `id`,
                    `parent_id`,
                    `lft`,
-                   `lvl`,
+                   `level`,
                    `rgt`
             FROM   `kuma_folders`;
 
             # Leveling the playing field.
             UPDATE  `tmp_tree`
-            SET     `lft` = NULL,
-                    `rgt` = NULL,
-                    `lvl` = NULL;
+            SET     `lft`   = NULL,
+                    `rgt`   = NULL,
+                    `level` = NULL;
 
             # Establishing starting numbers for all root elements.
             WHILE EXISTS (SELECT * FROM `tmp_tree` WHERE `parent_id` IS NULL AND `lft` IS NULL AND `rgt` IS NULL LIMIT 1) DO
 
                 UPDATE `tmp_tree`
-                SET    `lft` = startId,
-                       `rgt` = startId + 1,
-                       `lvl` = 0
+                SET    `lft`   = startId,
+                       `rgt`   = startId + 1,
+                       `level` = 0
                 WHERE  `parent_id` IS NULL
                   AND  `lft`       IS NULL
-                  AND  `rgt`      IS NULL
+                  AND  `rgt`       IS NULL
                 LIMIT  1;
 
                 SET startId = startId + 2;
@@ -124,7 +124,7 @@ class MigrateMediaCommand extends ContainerAwareCommand
             WHILE EXISTS (SELECT * FROM `tmp_tree` WHERE `lft` IS NULL LIMIT 1) DO
 
                 # Picking an unprocessed element which has a processed parent.
-                SELECT     `tmp_tree`.`id`, `parents`.`lvl`
+                SELECT     `tmp_tree`.`id`, `parents`.`level`
                   INTO     currentId, currentLevel
                 FROM       `tmp_tree`
                 INNER JOIN `tmp_tree` AS `parents`
@@ -156,19 +156,19 @@ class MigrateMediaCommand extends ContainerAwareCommand
 
                 # Setting lft and rgt values for current element.
                 UPDATE `tmp_tree`
-                SET    `lft` = currentLeft + 1,
-                       `rgt` = currentLeft + 2,
-                       `lvl` = currentLevel + 1
-                WHERE  `id`  = currentId;
+                SET    `lft`   = currentLeft + 1,
+                       `rgt`   = currentLeft + 2,
+                       `level` = currentLevel + 1
+                WHERE  `id`    = currentId;
 
             END WHILE;
 
             # Writing calculated values back to physical table.
             UPDATE `kuma_folders`, `tmp_tree`
-            SET    `kuma_folders`.`lft`  = `tmp_tree`.`lft`,
-                   `kuma_folders`.`rgt` = `tmp_tree`.`rgt`,
-                   `kuma_folders`.`lvl`  = `tmp_tree`.`lvl`
-            WHERE  `kuma_folders`.`id`   = `tmp_tree`.`id`;
+            SET    `kuma_folders`.`lft`   = `tmp_tree`.`lft`,
+                   `kuma_folders`.`rgt`   = `tmp_tree`.`rgt`,
+                   `kuma_folders`.`level` = `tmp_tree`.`level`
+            WHERE  `kuma_folders`.`id`    = `tmp_tree`.`id`;
 
             COMMIT;
 

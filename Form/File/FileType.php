@@ -2,6 +2,7 @@
 
 namespace Kunstmaan\MediaBundle\Form\File;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -45,6 +46,21 @@ class FileType extends AbstractType
                         'text',
                         array('required' => false, 'attr' => array('readonly' => 'readonly'))
                     );
+                    // Allow changing folder on edit
+                    $form->add('folder',
+                        'entity',
+                        array(
+                            'class'         => 'KunstmaanMediaBundle:Folder',
+                            'property'      => 'optionLabel',
+                            'query_builder' => function(EntityRepository $er) {
+                                    return $er
+                                        ->createQueryBuilder('f')
+                                        ->where('f.parent IS NOT NULL')
+                                        ->andWhere('f.deleted != true')
+                                        ->orderBy('f.lft');
+                                },
+                            'required'      => true,
+                        ));
                 }
             }
         );

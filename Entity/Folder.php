@@ -41,7 +41,7 @@ class Folder extends AbstractEntity
     /**
      * @var Folder
      *
-     * @ORM\ManyToOne(targetEntity="Folder", inversedBy="children", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Folder", inversedBy="children", fetch="LAZY")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
      * @Gedmo\TreeParent
      */
@@ -102,10 +102,10 @@ class Folder extends AbstractEntity
     /**
      * @var int
      *
-     * @ORM\Column(name="lvl", type="integer", nullable=true)
+     * @ORM\Column(name="level", type="integer", nullable=true)
      * @Gedmo\TreeLevel
      */
-    protected $lvl;
+    protected $level;
 
     /**
      * @var int
@@ -449,19 +449,19 @@ class Folder extends AbstractEntity
     }
 
     /**
-     * @param int $lvl
+     * @param int $level
      */
-    public function setLvl($lvl)
+    public function setLevel($level)
     {
-        $this->lvl = $lvl;
+        $this->level = $level;
     }
 
     /**
      * @return int
      */
-    public function getLvl()
+    public function getLevel()
     {
-        return $this->lvl;
+        return $this->level;
     }
 
     /**
@@ -488,4 +488,14 @@ class Folder extends AbstractEntity
         $this->setUpdatedAt(new \DateTime());
     }
 
+    /**
+     * @return string
+     */
+    public function getOptionLabel()
+    {
+        return str_repeat(
+            html_entity_decode('&nbsp;', ENT_QUOTES, 'UTF-8'),
+            $this->getLevel() * 2
+        ) . $this->getName();
+    }
 }

@@ -45,7 +45,8 @@ class FolderController extends Controller
 
         /* @var Folder $folder */
         $folder  = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
-        $folders = $em->getRepository('KunstmaanMediaBundle:Folder')->getAllFolders();
+        // $folders = $em->getRepository('KunstmaanMediaBundle:Folder')->getAllFolders();
+        $folders = $em->getRepository('KunstmaanMediaBundle:Folder')->getChildren();
 
         $adminListConfigurator = new MediaAdminListConfigurator($em, null, $mediaManager, $folder, $request);
         $adminList             = $this->get('kunstmaan_adminlist.factory')->createList($adminListConfigurator);

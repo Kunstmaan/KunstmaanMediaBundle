@@ -2,6 +2,8 @@
 
 namespace Kunstmaan\MediaBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Kunstmaan\MediaBundle\Entity\Folder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,57 +43,45 @@ class FolderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $folder = $this->folder;
-        $type   = $this;
         $builder
-          ->add('name')
-          ->add(
-            'rel',
-            'choice',
-            array(
-              'choices' => array(
-                'media'     => 'media',
-                'image'     => 'image',
-                'slideshow' => 'slideshow',
-                'video'     => 'video'
-              ),
+            ->add('name')
+            ->add(
+                'rel',
+                'choice',
+                array(
+                    'choices' => array(
+                        'media'     => 'media',
+                        'image'     => 'image',
+                        'slideshow' => 'slideshow',
+                        'video'     => 'video'
+                    ),
+                )
             )
-          )
-          ->add(
-            'parent',
-            'entity',
-            array(
-              'class'         => 'Kunstmaan\MediaBundle\Entity\Folder',
-              'required'      => true,
-              'query_builder' => function (\Doctrine\ORM\EntityRepository $er) use ($folder, $type) {
-                    $qb = $er->createQueryBuilder('folder');
+            ->add(
+                'parent',
+                'entity',
+                array(
+                    'class'         => 'KunstmaanMediaBundle:Folder',
+                    'property'      => 'optionLabel',
+                    'required'      => true,
+                    'query_builder' => function (EntityRepository $er) use ($folder) {
+                            /** @var QueryBuilder $qb */
+                            $qb = $er->createQueryBuilder('f');
 
-                    if ($folder != null && $folder->getId() != null) {
-                        $ids = "folder.id != " . $folder->getId();
-                        $ids .= $type->addChildren($folder);
-                        $qb->andwhere($ids);
-                    }
-                    $qb->andWhere('folder.deleted != true');
+                            // Fetch all folders except the current one and its children
+                            if ($folder != null && $folder->getId() != null) {
+                                $qb->where('f.lft < :lft')
+                                    ->orWhere('f.rgt > :rgt')
+                                    ->setParameter('lft', $folder->getLft())
+                                    ->setParameter('rgt', $folder->getRgt());
+                            }
+                            $qb->andWhere('f.deleted != true')
+                                ->orderBy('f.lft');
 
-                    return $qb;
-                }
-            )
-          );
-    }
-
-    /**
-     * @param Folder $folder
-     *
-     * @return string
-     */
-    public function addChildren(Folder $folder)
-    {
-        $ids = "";
-        foreach ($folder->getChildren() as $child) {
-            $ids .= " and folder.id != " . $child->getId();
-            $ids .= $this->addChildren($child);
-        }
-
-        return $ids;
+                            return $qb;
+                        }
+                )
+            );
     }
 
     /**
@@ -112,9 +102,9 @@ class FolderType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
-          array(
-            'data_class' => 'Kunstmaan\MediaBundle\Entity\Folder',
-          )
+            array(
+                'data_class' => 'Kunstmaan\MediaBundle\Entity\Folder',
+            )
         );
     }
 }
