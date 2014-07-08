@@ -2,14 +2,14 @@
 
 namespace Kunstmaan\MediaBundle\Repository;
 
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Kunstmaan\MediaBundle\Entity\Folder;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * FolderRepository
  */
-class FolderRepository extends EntityRepository
+class FolderRepository extends NestedTreeRepository
 {
     /**
      * @param Folder $folder The folder

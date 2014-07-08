@@ -5,6 +5,7 @@ namespace Kunstmaan\MediaBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Tree\Node as GedmoNode;
 use Kunstmaan\AdminBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,8 +15,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\FolderRepository")
  * @ORM\Table(name="kuma_folders")
  * @ORM\HasLifecycleCallbacks
+ * @Gedmo\Tree(type="nested")
  */
-class Folder extends AbstractEntity
+class Folder extends AbstractEntity implements GedmoNode
 {
 
     /**
@@ -86,6 +88,30 @@ class Folder extends AbstractEntity
      * @ORM\Column(type="string", name="internal_name", nullable=true)
      */
     protected $internalName;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="lft", type="integer", nullable=true)
+     * @Gedmo\TreeLeft
+     */
+    protected $lft;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="lvl", type="integer", nullable=true)
+     * @Gedmo\TreeLevel
+     */
+    protected $lvl;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="rgt", type="integer", nullable=true)
+     * @Gedmo\TreeRight
+     */
+    protected $rgt;
 
     /**
      * @var bool
@@ -394,6 +420,36 @@ class Folder extends AbstractEntity
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * Get tree left
+     *
+     * @return int
+     */
+    public function getLeft()
+    {
+        return $this->lft;
+    }
+
+    /**
+     * Get tree right
+     *
+     * @return int
+     */
+    public function getRight()
+    {
+        return $this->rgt;
+    }
+
+    /**
+     * Get tree level
+     *
+     * @return int
+     */
+    public function getLevel()
+    {
+        return $this->lvl;
     }
 
     /**
