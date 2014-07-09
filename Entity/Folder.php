@@ -13,11 +13,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\FolderRepository")
  * @ORM\Table(name="kuma_folders")
- * @ORM\HasLifecycleCallbacks
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Folder extends AbstractEntity
 {
-
     /**
      * @var string
      *
@@ -63,6 +62,7 @@ class Folder extends AbstractEntity
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="created_at")
+     * @Gedmo\Timestampable(on="create")
      */
     protected $createdAt;
 
@@ -70,6 +70,7 @@ class Folder extends AbstractEntity
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="updated_at")
+     * @Gedmo\Timestampable(on="update")
      */
     protected $updatedAt;
 
@@ -91,8 +92,16 @@ class Folder extends AbstractEntity
      * @var bool
      *
      * @ORM\Column(type="boolean")
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     protected $deleted;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
+     */
+    protected $deletedAt;
 
     /**
      * constructor
@@ -101,8 +110,6 @@ class Folder extends AbstractEntity
     {
         $this->children = new ArrayCollection();
         $this->media    = new ArrayCollection();
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
         $this->deleted = false;
     }
 
@@ -244,6 +251,7 @@ class Folder extends AbstractEntity
      * @param bool $deleted
      *
      * @return Folder
+     * @deprecated
      */
     public function setDeleted($deleted)
     {
@@ -269,25 +277,11 @@ class Folder extends AbstractEntity
     /**
      * Get media
      *
-     * @param bool $includeDeleted
-     *
      * @return ArrayCollection
      */
-    public function getMedia($includeDeleted = false)
+    public function getMedia()
     {
-        if ($includeDeleted) {
-            return $this->media;
-        }
-
-        return $this->media->filter(
-          function (Media $entry) {
-              if ($entry->isDeleted()) {
-                  return false;
-              }
-
-              return true;
-          }
-        );
+        return $this->media;
     }
 
     /**
@@ -307,25 +301,11 @@ class Folder extends AbstractEntity
     }
 
     /**
-     * @param bool $includeDeleted
-     *
      * @return Folder[]
      */
-    public function getChildren($includeDeleted = false)
+    public function getChildren()
     {
-        if ($includeDeleted) {
-            return $this->children;
-        }
-
-        return $this->children->filter(
-          function (Folder $entry) {
-              if ($entry->isDeleted()) {
-                  return false;
-              }
-
-              return true;
-          }
-        );
+        return $this->children;
     }
 
     /**
@@ -345,7 +325,27 @@ class Folder extends AbstractEntity
      */
     public function isDeleted()
     {
-        return $this->deleted;
+        return !is_null($this->deletedAt);
+    }
+
+    /**
+     * @param \DateTime|null $deletedAt
+     *
+     * @return Folder
+     */
+    public function setDeletedAt($deletedAt)
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
     }
 
     /**
@@ -395,13 +395,4 @@ class Folder extends AbstractEntity
 
         return $this;
     }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->setUpdatedAt(new \DateTime());
-    }
-
 }

@@ -3,6 +3,7 @@
 namespace Kunstmaan\MediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Kunstmaan\AdminBundle\Entity\AbstractEntity;
 
 /**
@@ -10,7 +11,7 @@ use Kunstmaan\AdminBundle\Entity\AbstractEntity;
  *
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\MediaRepository")
  * @ORM\Table(name="kuma_media")
- * @ORM\HasLifecycleCallbacks
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Media extends AbstractEntity
 {
@@ -55,13 +56,14 @@ class Media extends AbstractEntity
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="created_at")
+     * @Gedmo\Timestampable(on="create")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
      * @ORM\Column(type="datetime", name="updated_at")
+     * @Gedmo\Timestampable(on="update")
      */
     protected $updatedAt;
 
@@ -97,16 +99,22 @@ class Media extends AbstractEntity
      * @var bool
      *
      * @ORM\Column(type="boolean")
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     protected $deleted;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
+     */
+    protected $deletedAt;
 
     /**
      * constructor
      */
     public function __construct()
     {
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
         $this->deleted = false;
     }
 
@@ -278,7 +286,7 @@ class Media extends AbstractEntity
      * Set the specified metadata value
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return Media
      */
@@ -400,16 +408,18 @@ class Media extends AbstractEntity
 
     /**
      * @return bool
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function isDeleted()
     {
-        return $this->deleted;
+        return !is_null($this->deletedAt);
     }
 
     /**
      * @param bool $deleted
      *
      * @return Media
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function setDeleted($deleted)
     {
@@ -443,18 +453,9 @@ class Media extends AbstractEntity
      */
     public function getClassType()
     {
-        $class = explode('\\', get_class($this));
+        $class     = explode('\\', get_class($this));
         $classname = end($class);
 
         return $classname;
     }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->setUpdatedAt(new \DateTime());
-    }
-
 }
