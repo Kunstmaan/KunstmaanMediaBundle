@@ -11,3 +11,5 @@
 "deleted_at IS NULL".
 * A command 'kuma:media:migrate-soft-deletes' was added to migrate the deleted folders/media from the old to the new
 structure.
+* The Folder entity has been converted to a nested tree for performance reasons.
+* A command 'kuma:media:rebuild-folder-tree' was added to (re)build the folder tree.
