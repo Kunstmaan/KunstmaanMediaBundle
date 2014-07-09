@@ -2,6 +2,25 @@
 
 {% block extra_actions_header %}{% endblock %}
 
+{% block sidebar %}
+    <aside id="sidebar" class="sidebar">
+        <div class="search_wrp">
+            <form id="treeform">
+                <input type="text" id="searchVal" value="" />
+                <button id="search" class="btn search"><i class="icon-search"></i></button>
+            </form>
+        </div>
+        <div class="tree clearfix">
+            <ul>
+                {% for mediaFolder in folders %}
+                    {% include 'KunstmaanMediaBundle:Folder:foldertreeview.html.twig' %}
+                {% endfor %}
+            </ul>
+        </div>
+    </aside>
+
+{% endblock %}
+
 {% block content %}
     <div class="btn-group" style="position:absolute;right:20px;margin-top:-90px;">
         <a href="{{ path('KunstmaanMediaBundle_folder_show', { 'folderId': folder.id, viewMode: 'thumb-view'}) }}" class="btn {% if not app.session.get('media-list-view') %}active{% endif %}" style="font-size:14px;"><i class="icon-th-large"></i></a>

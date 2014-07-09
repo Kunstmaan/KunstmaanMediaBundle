@@ -43,55 +43,47 @@ class FolderType extends AbstractType
         $folder = $this->folder;
         $type   = $this;
         $builder
-          ->add('name')
-          ->add(
-            'rel',
-            'choice',
-            array(
-              'choices' => array(
-                'media'     => 'media',
-                'image'     => 'image',
-                'slideshow' => 'slideshow',
-                'video'     => 'video'
-              ),
+            ->add('name')
+            ->add(
+                'rel',
+                'choice',
+                array(
+                    'choices' => array(
+                        'media'     => 'media',
+                        'image'     => 'image',
+                        'slideshow' => 'slideshow',
+                        'video'     => 'video'
+                    ),
+                )
             )
-          )
-          ->add(
-            'parent',
-            'entity',
-            array(
-              'class'         => 'Kunstmaan\MediaBundle\Entity\Folder',
-              'required'      => true,
-              'query_builder' => function (\Doctrine\ORM\EntityRepository $er) use ($folder, $type) {
-                    $qb = $er->createQueryBuilder('folder');
+            ->add(
+                'parent',
+                'entity',
+                array(
+                    'class'         => 'Kunstmaan\MediaBundle\Entity\Folder',
+                    'required'      => true,
+                    'property'      => 'paddedName',
+                    'query_builder' => function (\Doctrine\ORM\EntityRepository $er) use ($folder, $type) {
+                            $qb = $er->createQueryBuilder('folder');
+                            $qb
+                                ->where('folder.deleted != true')
+                                ->orderBy('folder.lft');
 
-                    if ($folder != null && $folder->getId() != null) {
-                        $ids = "folder.id != " . $folder->getId();
-                        $ids .= $type->addChildren($folder);
-                        $qb->andwhere($ids);
-                    }
-                    $qb->andWhere('folder.deleted != true');
+                            if (!is_null($folder) && $folder->getId() !== null) {
+                                $orX = $qb->expr()->orX();
+                                $orX
+                                    ->add('folder.rgt > :right')
+                                    ->add('folder.lft < :left');
 
-                    return $qb;
-                }
-            )
-          );
-    }
+                                $qb->where($orX)
+                                    ->setParameter('left', $folder->getLeft())
+                                    ->setParameter('right', $folder->getRight());
+                            }
 
-    /**
-     * @param Folder $folder
-     *
-     * @return string
-     */
-    public function addChildren(Folder $folder)
-    {
-        $ids = "";
-        foreach ($folder->getChildren() as $child) {
-            $ids .= " and folder.id != " . $child->getId();
-            $ids .= $this->addChildren($child);
-        }
-
-        return $ids;
+                            return $qb;
+                        }
+                )
+            );
     }
 
     /**
@@ -112,9 +104,9 @@ class FolderType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
-          array(
-            'data_class' => 'Kunstmaan\MediaBundle\Entity\Folder',
-          )
+            array(
+                'data_class' => 'Kunstmaan\MediaBundle\Entity\Folder',
+            )
         );
     }
 }

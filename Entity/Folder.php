@@ -41,8 +41,9 @@ class Folder extends AbstractEntity implements GedmoNode
     /**
      * @var Folder
      *
-     * @ORM\ManyToOne(targetEntity="Folder", inversedBy="children", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Folder", inversedBy="children", fetch="LAZY")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
+     * @Gedmo\TreeParent
      */
     protected $parent;
 
@@ -57,7 +58,7 @@ class Folder extends AbstractEntity implements GedmoNode
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Media", mappedBy="folder")
+     * @ORM\OneToMany(targetEntity="Media", mappedBy="folder", fetch="LAZY")
      */
     protected $media;
 
@@ -450,6 +451,23 @@ class Folder extends AbstractEntity implements GedmoNode
     public function getLevel()
     {
         return $this->lvl;
+    }
+
+    /**
+     * @param int $lvl
+     *
+     * @return Folder
+     */
+    public function setLevel($lvl)
+    {
+        $this->lvl = $lvl;
+
+        return $this;
+    }
+
+    public function getPaddedName()
+    {
+        return str_repeat('-', $this->lvl) . ' ' . $this->getName();
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace Kunstmaan\MediaBundle\Repository;
 
+use Doctrine\ORM\QueryBuilder;
+use Gedmo\Exception\InvalidArgumentException;
+use Gedmo\Tool\Wrapper\EntityWrapper;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Kunstmaan\MediaBundle\Entity\Folder;
 use Doctrine\ORM\EntityNotFoundException;
@@ -17,8 +20,8 @@ class FolderRepository extends NestedTreeRepository
     public function save(Folder $folder)
     {
         $em = $this->getEntityManager();
-
-        $em->persist($folder);
+        $parent = $folder->getParent();
+        $this->persistAsLastChildOf($folder, $parent);
         $em->flush();
     }
 
@@ -73,9 +76,9 @@ class FolderRepository extends NestedTreeRepository
     public function getAllFolders($limit = null)
     {
         $qb = $this->createQueryBuilder('folder')
-          ->select('folder')
-          ->where('folder.parent is null AND folder.deleted != true')
-          ->orderBy('folder.name');
+            ->select('folder')
+            ->where('folder.parent is null AND folder.deleted != true')
+            ->orderBy('folder.name');
 
         if (false === is_null($limit)) {
             $qb->setMaxResults($limit);
@@ -102,7 +105,7 @@ class FolderRepository extends NestedTreeRepository
 
     public function getFirstTopFolder()
     {
-        $folder = $this->findOneBy(array('parent' => null));
+        $folder = $this->findOneBy(array('parent' => null, 'deleted' => false));
         if (!$folder) {
             throw new EntityNotFoundException('No first top folder found (where parent is NULL)');
         }
@@ -110,4 +113,22 @@ class FolderRepository extends NestedTreeRepository
         return $folder;
     }
 
+    public function getParentIds(Folder $folder)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = $this->getPathQueryBuilder($folder)
+            ->select('node.id');
+
+        $result = $qb->getQuery()->getScalarResult();
+        $ids    = array_map('current', $result);
+
+        return $ids;
+    }
+
+    public function childrenQueryBuilder($node = null, $direct = false, $sortByField = null, $direction = 'ASC', $includeNode = false)
+    {
+        $qb = parent::childrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode);
+
+        return $qb;
+    }
 }
