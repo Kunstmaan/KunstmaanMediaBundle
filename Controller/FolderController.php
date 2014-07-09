@@ -96,14 +96,13 @@ class FolderController extends Controller
         $folderName   = $folder->getName();
         $parentFolder = $folder->getParent();
 
-        if (empty($parentFolder)) {
+        if (is_null($parentFolder)) {
             $this->get('session')->getFlashBag()->add(
               'failure',
               'You can\'t delete the \'' . $folderName . '\' folder!'
             );
         } else {
-            $em->remove($folder);
-            $em->flush();
+            $em->getRepository('KunstmaanMediaBundle:Folder')->delete($folder);
             $this->get('session')->getFlashBag()->add('success', 'Folder \'' . $folderName . '\' has been deleted!');
             $folderId = $parentFolder->getId();
         }

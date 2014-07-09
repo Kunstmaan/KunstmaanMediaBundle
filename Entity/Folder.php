@@ -251,7 +251,7 @@ class Folder extends AbstractEntity
      * @param bool $deleted
      *
      * @return Folder
-     * @deprecated
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function setDeleted($deleted)
     {
@@ -322,6 +322,7 @@ class Folder extends AbstractEntity
 
     /**
      * @return bool
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function isDeleted()
     {

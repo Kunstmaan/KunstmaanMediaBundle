@@ -31,8 +31,7 @@ class FolderRepository extends EntityRepository
 
         $this->deleteMedia($folder, $em);
         $this->deleteChildren($folder, $em);
-        $folder->setDeleted(true);
-        $em->persist($folder);
+        $em->remove($folder);
         $em->flush();
     }
 
@@ -44,8 +43,6 @@ class FolderRepository extends EntityRepository
         $em = $this->getEntityManager();
 
         foreach ($folder->getMedia() as $item) {
-            $item->setDeleted(true);
-            $em->persist($item);
             $em->remove($item);
         }
     }
@@ -60,8 +57,7 @@ class FolderRepository extends EntityRepository
         foreach ($folder->getChildren() as $child) {
             $this->deleteMedia($child, $em);
             $this->deleteChildren($child, $em);
-            $child->setDeleted(true);
-            $em->persist($child);
+            $em->remove($child);
         }
     }
 
@@ -74,7 +70,7 @@ class FolderRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('folder')
           ->select('folder')
-          ->where('folder.parent is null AND folder.deleted != true')
+          ->where('folder.parent is null')
           ->orderBy('folder.name');
 
         if (false === is_null($limit)) {

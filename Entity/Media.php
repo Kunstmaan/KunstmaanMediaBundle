@@ -429,6 +429,26 @@ class Media extends AbstractEntity
     }
 
     /**
+     * @param \DateTime $deletedAt
+     *
+     * @return Media
+     */
+    public function setDeletedAt($deletedAt)
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
+    }
+
+    /**
      * @return string
      */
     public function getUrl()
