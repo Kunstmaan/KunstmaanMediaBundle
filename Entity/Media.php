@@ -10,7 +10,10 @@ use Kunstmaan\AdminBundle\Entity\AbstractEntity;
  * Media
  *
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\MediaRepository")
- * @ORM\Table(name="kuma_media")
+ * @ORM\Table(name="kuma_media", indexes={
+ *      @ORM\Index(name="idx_name", columns={"name"}),
+ *      @ORM\Index(name="idx_deleted_at", columns={"deleted_at"})
+ * })
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Media extends AbstractEntity
@@ -408,7 +411,6 @@ class Media extends AbstractEntity
 
     /**
      * @return bool
-     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function isDeleted()
     {

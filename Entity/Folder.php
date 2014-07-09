@@ -12,7 +12,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class that defines a folder from the MediaBundle in the database
  *
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\FolderRepository")
- * @ORM\Table(name="kuma_folders")
+ * @ORM\Table(name="kuma_folders", indexes={
+ *      @ORM\Index(name="idx_internal_name", columns={"internal_name"}),
+ *      @ORM\Index(name="idx_name", columns={"name"}),
+ *      @ORM\Index(name="idx_deleted_at", columns={"deleted_at"})
+ * })
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Folder extends AbstractEntity
@@ -322,7 +326,6 @@ class Folder extends AbstractEntity
 
     /**
      * @return bool
-     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function isDeleted()
     {

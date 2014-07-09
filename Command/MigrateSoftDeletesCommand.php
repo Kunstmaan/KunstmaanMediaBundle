@@ -7,6 +7,7 @@
 
 namespace Kunstmaan\MediaBundle\Command;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +23,9 @@ class MigrateSoftDeletesCommand extends ContainerAwareCommand
 
         $this->setName('kuma:media:migrate-soft-deletes')
             ->setDescription('Migrate media for soft deletes.')
-            ->setHelp("The <info>kuma:media:migrate</info> will loop over all media entries and set soft delete timestamps for deleted media.");
+            ->setHelp(
+                'The <info>kuma:media:migrate-soft-deletes</info> will loop over all media entries and set soft delete timestamps for deleted media.'
+            );
     }
 
     /**
@@ -30,6 +33,7 @@ class MigrateSoftDeletesCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var EntityManager $em */
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $this->updateFolders($output, $em);
@@ -38,13 +42,11 @@ class MigrateSoftDeletesCommand extends ContainerAwareCommand
 
     /**
      * @param OutputInterface $output
-     * @param                 $em
-     *
-     * @return array
+     * @param EntityManager   $em
      */
     protected function updateFolders(OutputInterface $output, $em)
     {
-        $sql  = "UPDATE kuma_folders SET deleted_at = updated_at WHERE deleted = true";
+        $sql  = 'UPDATE kuma_folders SET deleted_at = updated_at WHERE deleted = true';
         $stmt = $em->getConnection()->prepare($sql);
         $stmt->execute();
         $output->writeln('Updated all folders');
@@ -52,11 +54,11 @@ class MigrateSoftDeletesCommand extends ContainerAwareCommand
 
     /**
      * @param OutputInterface $output
-     * @param                 $em
+     * @param EntityManager   $em
      */
     protected function updateMedia(OutputInterface $output, $em)
     {
-        $sql  = "UPDATE kuma_media SET deleted_at = updated_at WHERE deleted = true";
+        $sql  = 'UPDATE kuma_media SET deleted_at = updated_at WHERE deleted = true';
         $stmt = $em->getConnection()->prepare($sql);
         $stmt->execute();
         $output->writeln('Updated all media');
