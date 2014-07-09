@@ -127,15 +127,15 @@ class MediaTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Kunstmaan\MediaBundle\Entity\Media::setDeleted
-     * @covers Kunstmaan\MediaBundle\Entity\Media::isDeleted
+     * @covers Kunstmaan\MediaBundle\Entity\Media::setDeletedAt
+     * @covers Kunstmaan\MediaBundle\Entity\Media::getDeletedAt
      */
-    public function testSetDeleted()
+    public function testGetSetDeletedAt()
     {
-        $this->object->setDeleted(true);
-        $this->assertEquals(true, $this->object->isDeleted());
-        $this->object->setDeleted(false);
-        $this->assertEquals(false, $this->object->isDeleted());
-    }
+        $this->assertEquals(null, $this->object->getDeletedAt());
 
+        $now = new \DateTime();
+        $this->object->setDeletedAt($now);
+        $this->assertEquals($now, $this->object->getDeletedAt());
+    }
 }

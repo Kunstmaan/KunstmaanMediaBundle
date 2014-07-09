@@ -65,9 +65,7 @@ class FolderType extends AbstractType
                     'property'      => 'paddedName',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $er) use ($folder, $type) {
                             $qb = $er->createQueryBuilder('folder');
-                            $qb
-                                ->where('folder.deleted != true')
-                                ->orderBy('folder.lft');
+                            $qb->orderBy('folder.lft');
 
                             if (!is_null($folder) && $folder->getId() !== null) {
                                 $orX = $qb->expr()->orX();

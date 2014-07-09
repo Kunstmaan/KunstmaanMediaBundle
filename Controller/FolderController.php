@@ -2,6 +2,7 @@
 
 namespace Kunstmaan\MediaBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
 use Kunstmaan\MediaBundle\AdminList\MediaAdminListConfigurator;
 use Kunstmaan\MediaBundle\Entity\Folder;
 use Kunstmaan\MediaBundle\Form\FolderType;
@@ -96,6 +97,7 @@ class FolderController extends Controller
      */
     public function deleteAction($folderId)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
         /* @var Folder $folder */
@@ -103,15 +105,13 @@ class FolderController extends Controller
         $folderName   = $folder->getName();
         $parentFolder = $folder->getParent();
 
-        if (empty($parentFolder)) {
+        if (is_null($parentFolder)) {
             $this->get('session')->getFlashBag()->add(
                 'failure',
                 'You can\'t delete the \'' . $folderName . '\' folder!'
             );
         } else {
-            $folder->setDeleted(true);
-            $em->persist($folder);
-            $em->flush();
+            $em->getRepository('KunstmaanMediaBundle:Folder')->delete($folder);
             $this->get('session')->getFlashBag()->add('success', 'Folder \'' . $folderName . '\' has been deleted!');
             $folderId = $parentFolder->getId();
         }

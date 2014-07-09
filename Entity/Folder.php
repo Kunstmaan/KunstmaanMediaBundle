@@ -13,13 +13,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class that defines a folder from the MediaBundle in the database
  *
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\FolderRepository")
- * @ORM\Table(name="kuma_folders")
- * @ORM\HasLifecycleCallbacks
+ * @ORM\Table(name="kuma_folders", indexes={
+ *      @ORM\Index(name="idx_internal_name", columns={"internal_name"}),
+ *      @ORM\Index(name="idx_name", columns={"name"}),
+ *      @ORM\Index(name="idx_deleted_at", columns={"deleted_at"})
+ * })
  * @Gedmo\Tree(type="nested")
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Folder extends AbstractEntity implements GedmoNode
 {
-
     /**
      * @var string
      *
@@ -66,6 +69,7 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="created_at")
+     * @Gedmo\Timestampable(on="create")
      */
     protected $createdAt;
 
@@ -73,6 +77,7 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="updated_at")
+     * @Gedmo\Timestampable(on="update")
      */
     protected $updatedAt;
 
@@ -118,8 +123,16 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var bool
      *
      * @ORM\Column(type="boolean")
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     protected $deleted;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
+     */
+    protected $deletedAt;
 
     /**
      * constructor
@@ -128,8 +141,6 @@ class Folder extends AbstractEntity implements GedmoNode
     {
         $this->children = new ArrayCollection();
         $this->media    = new ArrayCollection();
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
         $this->deleted = false;
     }
 
@@ -271,6 +282,7 @@ class Folder extends AbstractEntity implements GedmoNode
      * @param bool $deleted
      *
      * @return Folder
+     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function setDeleted($deleted)
     {
@@ -296,25 +308,11 @@ class Folder extends AbstractEntity implements GedmoNode
     /**
      * Get media
      *
-     * @param bool $includeDeleted
-     *
      * @return ArrayCollection
      */
-    public function getMedia($includeDeleted = false)
+    public function getMedia()
     {
-        if ($includeDeleted) {
-            return $this->media;
-        }
-
-        return $this->media->filter(
-          function (Media $entry) {
-              if ($entry->isDeleted()) {
-                  return false;
-              }
-
-              return true;
-          }
-        );
+        return $this->media;
     }
 
     /**
@@ -334,25 +332,11 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * @param bool $includeDeleted
-     *
      * @return Folder[]
      */
-    public function getChildren($includeDeleted = false)
+    public function getChildren()
     {
-        if ($includeDeleted) {
-            return $this->children;
-        }
-
-        return $this->children->filter(
-          function (Folder $entry) {
-              if ($entry->isDeleted()) {
-                  return false;
-              }
-
-              return true;
-          }
-        );
+        return $this->children;
     }
 
     /**
@@ -372,7 +356,27 @@ class Folder extends AbstractEntity implements GedmoNode
      */
     public function isDeleted()
     {
-        return $this->deleted;
+        return !is_null($this->deletedAt);
+    }
+
+    /**
+     * @param \DateTime|null $deletedAt
+     *
+     * @return Folder
+     */
+    public function setDeletedAt($deletedAt)
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
     }
 
     /**
@@ -469,13 +473,4 @@ class Folder extends AbstractEntity implements GedmoNode
     {
         return str_repeat('-', $this->lvl) . ' ' . $this->getName();
     }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->setUpdatedAt(new \DateTime());
-    }
-
 }

@@ -34,8 +34,7 @@ class FolderRepository extends NestedTreeRepository
 
         $this->deleteMedia($folder, $em);
         $this->deleteChildren($folder, $em);
-        $folder->setDeleted(true);
-        $em->persist($folder);
+        $em->remove($folder);
         $em->flush();
     }
 
@@ -47,8 +46,6 @@ class FolderRepository extends NestedTreeRepository
         $em = $this->getEntityManager();
 
         foreach ($folder->getMedia() as $item) {
-            $item->setDeleted(true);
-            $em->persist($item);
             $em->remove($item);
         }
     }
@@ -63,8 +60,7 @@ class FolderRepository extends NestedTreeRepository
         foreach ($folder->getChildren() as $child) {
             $this->deleteMedia($child, $em);
             $this->deleteChildren($child, $em);
-            $child->setDeleted(true);
-            $em->persist($child);
+            $em->remove($child);
         }
     }
 
@@ -76,9 +72,9 @@ class FolderRepository extends NestedTreeRepository
     public function getAllFolders($limit = null)
     {
         $qb = $this->createQueryBuilder('folder')
-            ->select('folder')
-            ->where('folder.parent is null AND folder.deleted != true')
-            ->orderBy('folder.name');
+          ->select('folder')
+          ->where('folder.parent is null')
+          ->orderBy('folder.name');
 
         if (false === is_null($limit)) {
             $qb->setMaxResults($limit);
