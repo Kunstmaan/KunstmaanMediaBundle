@@ -6,6 +6,10 @@ Upgrade Instructions
 When upgrading from a previous version, make sure you update the table structure (```app/console doctrine:schema:update --force```
 or ```app/console doctrine:migrations:diff && app/console doctrine:migrations:migrate```).
 
+Also make sure that the gedmo soft delete and timestampable behavior is enabled by checking your app/config.yml file.
+It should contain :
+https://github.com/Kunstmaan/KunstmaanBundlesStandardEdition/pull/71/files
+
 Afterwards run
 - ```app/console kuma:media:migrate-soft-deletes``` to migrate the soft deletes
 - ```app/console kuma:media:rebuild-folder-tree``` to initialize the folder tree
