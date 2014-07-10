@@ -134,6 +134,7 @@ class FolderController extends Controller
      */
     public function subCreateAction(Request $request, $folderId)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
         /* @var Folder $parent */

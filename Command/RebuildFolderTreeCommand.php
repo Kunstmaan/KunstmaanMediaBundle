@@ -32,23 +32,33 @@ class RebuildFolderTreeCommand extends ContainerAwareCommand
     {
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
+        // Reset tree...
+        $sql  = 'UPDATE kuma_folders SET lvl=NULL,lft=NULL,rgt=NULL';
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+
         $repo = $em->getRepository('KunstmaanMediaBundle:Folder');
-        $folders = $repo->findBy(array('deleted' => false), array('parent' => 'ASC', 'name' => 'asc'));
+        $folders = $repo->findBy(array(), array('parent' => 'ASC', 'name' => 'asc'));
 
         $rootFolder = $folders[0];
+        $first = true;
         foreach ($folders as $folder) {
             // Force parent load
             $parent = $folder->getParent();
             if (is_null($parent)) {
                 $folder->setLevel(0);
+                if ($first) {
+                    $repo->persistAsFirstChild($folder);
+                    $first = false;
+                } else {
+                    $repo->persistAsNextSiblingOf($folder, $rootFolder);
+                }
             } else {
                 $folder->setLevel($parent->getLevel() + 1);
+                $repo->persistAsLastChildOf($folder, $parent);
             }
             $em->persist($folder);
         }
-        $repo->verify();
-        $repo->recover();
-        $repo->reorder($rootFolder, 'name');
         $em->flush();
 
         $output->writeln('Updated all folders');

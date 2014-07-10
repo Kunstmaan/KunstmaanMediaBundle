@@ -2,6 +2,7 @@
 
 namespace Kunstmaan\MediaBundle\Helper;
 
+use Kunstmaan\MediaBundle\Entity\Folder;
 use Kunstmaan\MediaBundle\Entity\Media;
 use Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler;
 

@@ -141,7 +141,7 @@ class Folder extends AbstractEntity implements GedmoNode
     {
         $this->children = new ArrayCollection();
         $this->media    = new ArrayCollection();
-        $this->deleted = false;
+        $this->deleted  = false;
     }
 
     /**
@@ -250,20 +250,6 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * Set parent
-     *
-     * @param Folder $parent
-     *
-     * @return Folder
-     */
-    public function setParent(Folder $parent)
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    /**
      * Add a child
      *
      * @param Folder $child
@@ -274,6 +260,20 @@ class Folder extends AbstractEntity implements GedmoNode
     {
         $this->children[] = $child;
         $child->setParent($this);
+
+        return $this;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param Folder $parent
+     *
+     * @return Folder
+     */
+    public function setParent(Folder $parent = null)
+    {
+        $this->parent = $parent;
 
         return $this;
     }
@@ -455,18 +455,6 @@ class Folder extends AbstractEntity implements GedmoNode
     public function getLevel()
     {
         return $this->lvl;
-    }
-
-    /**
-     * @param int $lvl
-     *
-     * @return Folder
-     */
-    public function setLevel($lvl)
-    {
-        $this->lvl = $lvl;
-
-        return $this;
     }
 
     public function getPaddedName()
