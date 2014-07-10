@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Kunstmaan\MediaBundle\AdminList\MediaAdminListConfigurator;
 use Kunstmaan\MediaBundle\Entity\Folder;
 use Kunstmaan\MediaBundle\Entity\Media;
+use Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler;
 use Kunstmaan\MediaBundle\Helper\MediaManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -39,7 +40,7 @@ class ChooserController extends Controller
         // Go to the last visited folder
         if ($session->get('last-media-folder')) {
             try {
-                $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($session->get('last-media-folder'));
+                $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($session->get('last-media-folder'));
                 $folderId = $session->get('last-media-folder');
             } catch (EntityNotFoundException $e) {
                 $folderId = false;
@@ -54,10 +55,10 @@ class ChooserController extends Controller
         }
 
         $params = array(
-          'folderId'        => $folderId,
-          'type'            => $type,
-          'CKEditorFuncNum' => $cKEditorFuncNum,
-          'linkChooser'     => $linkChooser
+            'folderId'        => $folderId,
+            'type'            => $type,
+            'CKEditorFuncNum' => $cKEditorFuncNum,
+            'linkChooser'     => $linkChooser
         );
 
         return $this->redirect($this->generateUrl('KunstmaanMediaBundle_chooser_show_folder', $params));
@@ -97,9 +98,8 @@ class ChooserController extends Controller
 
         /* @var Folder $folder */
         $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
-        /* @var array $mediaHandler */
-        $folders = $em->getRepository('KunstmaanMediaBundle:Folder')->getAllFolders();
 
+        /** @var AbstractMediaHandler $handler */
         $handler = null;
         if ($type) {
             $handler = $mediaHandler->getHandlerForType($type);
@@ -125,19 +125,19 @@ class ChooserController extends Controller
         }
 
         return array(
-          'cKEditorFuncNum' => $cKEditorFuncNum,
-          'linkChooser'     => $linkChooser,
-          'linkChooserLink' => $linkChooserLink,
-          'mediamanager'    => $mediaHandler,
-          'handler'         => $handler,
-          'type'            => $type,
-          'folder'          => $folder,
-          'folders'         => $folders,
-          'adminlist'       => $adminList,
-          'fileform'        => $this->createTypeFormView($mediaHandler, "file"),
-          'videoform'       => $this->createTypeFormView($mediaHandler, "video"),
-          'slideform'       => $this->createTypeFormView($mediaHandler, "slide"),
-          'audioform'       => $this->createTypeFormView($mediaHandler, "audio")
+            'cKEditorFuncNum' => $cKEditorFuncNum,
+            'linkChooser'     => $linkChooser,
+            'linkChooserLink' => $linkChooserLink,
+            'mediamanager'    => $mediaHandler,
+            'foldermanager'   => $this->get('kunstmaan_media.folder_manager'),
+            'handler'         => $handler,
+            'type'            => $type,
+            'folder'          => $folder,
+            'adminlist'       => $adminList,
+            'fileform'        => $this->createTypeFormView($mediaHandler, "file"),
+            'videoform'       => $this->createTypeFormView($mediaHandler, "video"),
+            'slideform'       => $this->createTypeFormView($mediaHandler, "slide"),
+            'audioform'       => $this->createTypeFormView($mediaHandler, "audio")
         );
     }
 

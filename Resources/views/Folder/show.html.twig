@@ -12,6 +12,9 @@
         </div>
         <div class="tree clearfix">
             <ul>
+                {% set parentIds = foldermanager.getParentIds(folder) %}
+                {% set rootFolder = foldermanager.getRootFolderFor(folder) %}
+                {% set folders = foldermanager.getFolderHierarchy(rootFolder) %}
                 {% for mediaFolder in folders %}
                     {% include 'KunstmaanMediaBundle:Folder:foldertreeview.html.twig' %}
                 {% endfor %}

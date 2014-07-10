@@ -1,5 +1,6 @@
 parameters:
     kunstmaan_media.media_manager.class: 'Kunstmaan\MediaBundle\Helper\MediaManager'
+    kunstmaan_media.folder_manager.class: 'Kunstmaan\MediaBundle\Helper\FolderManager'
     kunstmaan_media.menu.adaptor.class: 'Kunstmaan\MediaBundle\Helper\Menu\MediaMenuAdaptor'
     kunstmaan_media.listener.doctrine.class: 'Kunstmaan\MediaBundle\EventListener\DoctrineMediaListener'
     kunstmaan_media.form.type.media.class: 'Kunstmaan\MediaBundle\Form\Type\MediaType'
@@ -66,3 +67,13 @@ services:
     kunstmaan_media.media_creator_service:
         class: "%kunstmaan_media.media_creator_service.class%"
         arguments: ["@service_container"]
+
+    kunstmaan_media.repository.folder:
+        class:            Kunstmaan\MediaBundle\Repository\FolderRepository
+        factory_service:  "doctrine.orm.entity_manager"
+        factory_method:   getRepository
+        arguments:        ["KunstmaanMediaBundle:Folder"]
+
+    kunstmaan_media.folder_manager:
+        class: "%kunstmaan_media.folder_manager.class%"
+        arguments: ["@kunstmaan_media.repository.folder"]

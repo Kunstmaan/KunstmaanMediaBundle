@@ -47,9 +47,6 @@ class FolderController extends Controller
 
         /* @var Folder $folder */
         $folder     = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
-        $parentIds  = $em->getRepository('KunstmaanMediaBundle:Folder')->getParentIds($folder);
-        $rootFolder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($parentIds[0]);
-        $folders    = $em->getRepository('KunstmaanMediaBundle:Folder')->childrenHierarchy($rootFolder);
 
         $adminListConfigurator = new MediaAdminListConfigurator($em, null, $mediaManager, $folder, $request);
         $adminList             = $this->get('kunstmaan_adminlist.factory')->createList($adminListConfigurator);
@@ -78,12 +75,11 @@ class FolderController extends Controller
         }
 
         return array(
+            'foldermanager' => $this->get('kunstmaan_media.folder_manager'),
             'mediamanager' => $this->get('kunstmaan_media.media_manager'),
             'subform'      => $subForm->createView(),
             'editform'     => $editForm->createView(),
             'folder'       => $folder,
-            'parentIds'    => $parentIds,
-            'folders'      => $folders,
             'adminlist'    => $adminList
         );
     }
