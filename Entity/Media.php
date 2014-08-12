@@ -18,6 +18,14 @@ use Kunstmaan\AdminBundle\Entity\AbstractEntity;
  */
 class Media extends AbstractEntity
 {
+    /**
+     * @var string
+     *
+     * @Gedmo\Locale
+     * Used locale to override Translation listener`s locale
+     * this is not a mapped field of entity metadata, just a simple property
+     */
+    protected $locale;
 
     /**
      * @var string
@@ -33,6 +41,22 @@ class Media extends AbstractEntity
      * @ORM\Column(type="string", nullable=true)
      */
     protected $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     * @Gedmo\Translatable
+     */
+    protected $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="copyright", type="string", nullable=true)
+     * @Gedmo\Translatable
+     */
+    protected $copyright;
 
     /**
      * @var string
@@ -119,6 +143,18 @@ class Media extends AbstractEntity
     public function __construct()
     {
         $this->deleted = false;
+    }
+
+    /**
+     * @param string $locale
+     *
+     * @return Media
+     */
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
+
+        return $this;
     }
 
     /**
@@ -468,6 +504,46 @@ class Media extends AbstractEntity
         $this->url = $url;
 
         return $this;
+    }
+
+    /**
+     * @param string $copyright
+     *
+     * @return Media
+     */
+    public function setCopyright($copyright)
+    {
+        $this->copyright = $copyright;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCopyright()
+    {
+        return $this->copyright;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return Media
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

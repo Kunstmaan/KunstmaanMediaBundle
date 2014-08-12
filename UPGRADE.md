@@ -1,7 +1,7 @@
 Upgrade Instructions
 ====================
 
-## To v2.3.16 with Gedmo soft deleteable & folder tree
+## To v2.3.X with Gedmo soft deleteable & folder tree
 
 When upgrading from a previous version, make sure you update the table structure (```app/console doctrine:schema:update --force```
 or ```app/console doctrine:migrations:diff && app/console doctrine:migrations:migrate```).
