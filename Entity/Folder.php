@@ -437,8 +437,18 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * Get tree left
+     * @param int $lft
      *
+     * @return Folder
+     */
+    public function setLeft($lft)
+    {
+        $this->lft = $lft;
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getLeft()
@@ -447,8 +457,38 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * Get tree right
+     * @param int $lvl
      *
+     * @return Folder
+     */
+    public function setLevel($lvl)
+    {
+        $this->lvl = $lvl;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLevel()
+    {
+        return $this->lvl;
+    }
+
+    /**
+     * @param int $rgt
+     *
+     * @return Folder
+     */
+    public function setRight($rgt)
+    {
+        $this->rgt = $rgt;
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getRight()
@@ -457,17 +497,13 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * Get tree level
-     *
-     * @return int
+     * @return string
      */
-    public function getLevel()
+    public function getOptionLabel()
     {
-        return $this->lvl;
-    }
-
-    public function getPaddedName()
-    {
-        return str_repeat('-', $this->lvl) . ' ' . $this->getName();
+        return str_repeat(
+            html_entity_decode('&nbsp;', ENT_QUOTES, 'UTF-8'),
+            $this->getLevel() * 2
+        ) . $this->getName();
     }
 }

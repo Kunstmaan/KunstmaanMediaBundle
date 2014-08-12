@@ -3,12 +3,16 @@
 namespace Kunstmaan\MediaBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use Kunstmaan\MediaBundle\Entity\Media;
+use Kunstmaan\MediaBundle\Repository\FolderRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class MigrateNameCommand extends ContainerAwareCommand
 {
+    /** @var EntityManager $em */
+    protected $em;
 
     protected function configure()
     {
@@ -22,11 +26,6 @@ class MigrateNameCommand extends ContainerAwareCommand
             );
     }
 
-    public function setEntityManager(EntityManager $em)
-    {
-        $this->em = $em;
-    }
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Migrating media name...');
@@ -36,24 +35,24 @@ class MigrateNameCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $medias = $em->getRepository('KunstmaanMediaBundle:Media')->findAll();
-        /** @var Media $media */
+        $updates = 0;
         try {
-            $em->beginTransaction();
-            $updates = 0;
+            $this->em->beginTransaction();
+            /** @var Media $media */
             foreach ($medias as $media) {
                 $filename = $media->getOriginalFilename();
                 if (empty($filename)) {
                     $media->setOriginalFilename($media->getName());
-                    $em->persist($media);
+                    $this->em->persist($media);
                     $updates++;
                 }
             }
-            $em->flush();
-            $em->commit();
-            $output->writeln('<info>' .$updates . ' media files have been migrated.</info>');
+            $this->em->flush();
+            $this->em->commit();
         } catch (\Exception $e) {
             $em->rollback();
             $output->writeln('An error occured while migrating media name : <error>' . $e->getMessage() . '</error>');
         }
+        $output->writeln('<info>' . $updates . ' media files have been migrated.</info>');
     }
 }

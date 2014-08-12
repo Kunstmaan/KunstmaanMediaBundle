@@ -2,12 +2,10 @@
 
 namespace Kunstmaan\MediaBundle\Repository;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
-use Gedmo\Exception\InvalidArgumentException;
-use Gedmo\Tool\Wrapper\EntityWrapper;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Kunstmaan\MediaBundle\Entity\Folder;
-use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * FolderRepository
@@ -130,7 +128,7 @@ class FolderRepository extends NestedTreeRepository
 
     public function getFirstTopFolder()
     {
-        $folder = $this->findOneBy(array('parent' => null, 'deleted' => false));
+        $folder = $this->findOneBy(array('parent' => null));
         if (!$folder) {
             throw new EntityNotFoundException('No first top folder found (where parent is NULL)');
         }

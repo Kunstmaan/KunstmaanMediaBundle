@@ -2,6 +2,8 @@
 
 namespace Kunstmaan\MediaBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Kunstmaan\MediaBundle\Entity\Folder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,7 +43,6 @@ class FolderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $folder = $this->folder;
-        $type   = $this;
         $builder
             ->add('name')
             ->add(
@@ -60,13 +61,15 @@ class FolderType extends AbstractType
                 'parent',
                 'entity',
                 array(
-                    'class'         => 'Kunstmaan\MediaBundle\Entity\Folder',
+                    'class'         => 'KunstmaanMediaBundle:Folder',
+                    'property'      => 'optionLabel',
                     'required'      => true,
-                    'property'      => 'paddedName',
-                    'query_builder' => function (\Doctrine\ORM\EntityRepository $er) use ($folder, $type) {
-                            $qb = $er->createQueryBuilder('folder');
+                    'query_builder' => function (EntityRepository $er) use ($folder) {
+                            /** @var QueryBuilder $qb */
+                            $qb = $er->createQueryBuilder('f');
                             $qb->orderBy('folder.lft');
 
+                            // Fetch all folders except the current one and its children
                             if (!is_null($folder) && $folder->getId() !== null) {
                                 $orX = $qb->expr()->orX();
                                 $orX

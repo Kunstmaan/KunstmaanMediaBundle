@@ -2,6 +2,7 @@
 
 namespace Kunstmaan\MediaBundle\Helper\File;
 
+use Kunstmaan\MediaBundle\Entity\Folder;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -51,6 +52,22 @@ class FileHelper
     public function setName($name)
     {
         $this->media->setName($name);
+    }
+
+    /**
+     * @return Folder
+     */
+    public function getFolder()
+    {
+        return $this->media->getFolder();
+    }
+
+    /**
+     * @param Folder $folder
+     */
+    public function setFolder(Folder $folder)
+    {
+        $this->media->setFolder($folder);
     }
 
     /**
