@@ -37,18 +37,18 @@ class MigrateNameCommand extends ContainerAwareCommand
         $medias = $em->getRepository('KunstmaanMediaBundle:Media')->findAll();
         $updates = 0;
         try {
-            $this->em->beginTransaction();
+            $em->beginTransaction();
             /** @var Media $media */
             foreach ($medias as $media) {
                 $filename = $media->getOriginalFilename();
                 if (empty($filename)) {
                     $media->setOriginalFilename($media->getName());
-                    $this->em->persist($media);
+                    $em->persist($media);
                     $updates++;
                 }
             }
-            $this->em->flush();
-            $this->em->commit();
+            $em->flush();
+            $em->commit();
         } catch (\Exception $e) {
             $em->rollback();
             $output->writeln('An error occured while migrating media name : <error>' . $e->getMessage() . '</error>');

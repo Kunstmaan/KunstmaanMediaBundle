@@ -67,14 +67,14 @@ class FolderType extends AbstractType
                     'query_builder' => function (EntityRepository $er) use ($folder) {
                             /** @var QueryBuilder $qb */
                             $qb = $er->createQueryBuilder('f');
-                            $qb->orderBy('folder.lft');
+                            $qb->orderBy('f.lft');
 
                             // Fetch all folders except the current one and its children
                             if (!is_null($folder) && $folder->getId() !== null) {
                                 $orX = $qb->expr()->orX();
                                 $orX
-                                    ->add('folder.rgt > :right')
-                                    ->add('folder.lft < :left');
+                                    ->add('f.rgt > :right')
+                                    ->add('f.lft < :left');
 
                                 $qb->where($orX)
                                     ->setParameter('left', $folder->getLeft())

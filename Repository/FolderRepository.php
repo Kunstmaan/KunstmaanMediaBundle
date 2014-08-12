@@ -26,7 +26,7 @@ class FolderRepository extends NestedTreeRepository
         try {
             // Find where to insert the new item
             $children = $parent->getChildren();
-            if (empty($children)) {
+            if ($children->isEmpty()) {
                 // No children yet - insert as first child
                 $this->persistAsFirstChildOf($folder, $parent);
             } else {
