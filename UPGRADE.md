@@ -3,7 +3,8 @@ Upgrade Instructions
 
 ## To v2.3.X with extra fields, Gedmo soft deleteable & folder tree
 
-When upgrading from a previous version, make sure you update the table structure (```app/console doctrine:schema:update --force```
+When upgrading from a previous version, make sure you update the table structure (
+```app/console doctrine:schema:update --force```
 or ```app/console doctrine:migrations:diff && app/console doctrine:migrations:migrate```).
 
 A new field to store the original filename was added to the Media table, so you will have to update the table structure
@@ -23,3 +24,6 @@ Afterwards run
 
 The media section should now be much faster then before (this will especially be noticeable if you have lots of media
 folders).
+
+If you upgrade and want to create PDF preview images for PDF files that have already been uploaded, you can run
+the ```app/console kuma:media:create-pdf-previews``` command.

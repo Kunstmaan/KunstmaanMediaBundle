@@ -8,6 +8,7 @@ parameters:
     kunstmaan_media.icon_font_manager.class: 'Kunstmaan\MediaBundle\Helper\IconFont\IconFontManager'
     kunstmaan_media.icon_font.default_loader.class: 'Kunstmaan\MediaBundle\Helper\IconFont\DefaultIconFontLoader'
     kunstmaan_media.media_creator_service.class: 'Kunstmaan\MediaBundle\Helper\Services\MediaCreatorService'
+    kunstmaan_media.pdf_transformer.class: 'Kunstmaan\MediaBundle\Helper\Transformer\PdfTransformer'
 
 services:
     liip_imagine.data.loader.stream.profile_photos:
@@ -77,3 +78,10 @@ services:
     kunstmaan_media.folder_manager:
         class: "%kunstmaan_media.folder_manager.class%"
         arguments: ["@kunstmaan_media.repository.folder"]
+
+    kunstmaan_media.imagick:
+        class: "Imagick"
+
+    kunstmaan_media.pdf_transformer:
+        class: "%kunstmaan_media.pdf_transformer.class%"
+        arguments: ["@kunstmaan_media.imagick"]
