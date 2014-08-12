@@ -56,13 +56,14 @@ class FileType extends AbstractType
                 'required' => false
             )
         );
+
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) {
                 $helper = $event->getData();
                 $form   = $event->getForm();
 
-                // Only add file field as required field when creating new objects
+                // Make sure file field is when creating new (not persisted) objects
                 if (!$helper || null === $helper->getMedia()->getId()) {
                     $form->add(
                         'file',
@@ -70,6 +71,18 @@ class FileType extends AbstractType
                         array(
                             'constraints' => array(new NotBlank()),
                             'required'    => true
+                        )
+                    );
+                } else {
+                    // Display original filename only for persisted objects
+                    $form->add(
+                        'originalFilename',
+                        'text',
+                        array(
+                            'required' => false,
+                            'attr'     => array(
+                                'readonly' => 'readonly'
+                            )
                         )
                     );
                 }

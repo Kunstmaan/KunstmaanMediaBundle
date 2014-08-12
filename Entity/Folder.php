@@ -62,6 +62,7 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Media", mappedBy="folder", fetch="LAZY")
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $media;
 
@@ -142,6 +143,14 @@ class Folder extends AbstractEntity implements GedmoNode
         $this->children = new ArrayCollection();
         $this->media    = new ArrayCollection();
         $this->deleted  = false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTranslatableLocale()
+    {
+        return $this->locale;
     }
 
     /**
@@ -332,7 +341,7 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * @return Folder[]
+     * @return ArrayCollection
      */
     public function getChildren()
     {
@@ -340,7 +349,7 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
-     * @param array $children
+     * @param ArrayCollection $children
      *
      * @return Folder
      */

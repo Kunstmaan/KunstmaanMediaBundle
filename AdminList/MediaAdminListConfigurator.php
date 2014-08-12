@@ -41,11 +41,11 @@ class MediaAdminListConfigurator extends AbstractDoctrineORMAdminListConfigurato
      * @param Request       $request      The request object
      */
     public function __construct(
-      EntityManager $em,
-      AclHelper $aclHelper = null,
-      MediaManager $mediaManager,
-      Folder $folder,
-      Request $request
+        EntityManager $em,
+        AclHelper $aclHelper = null,
+        MediaManager $mediaManager,
+        Folder $folder,
+        Request $request
     ) {
         parent::__construct($em, $aclHelper);
 
@@ -167,23 +167,23 @@ class MediaAdminListConfigurator extends AbstractDoctrineORMAdminListConfigurato
                 switch ($type) {
                     case 'file':
                         $queryBuilder->andWhere('b.location = :location')
-                          ->setParameter('location', 'local');
+                            ->setParameter('location', 'local');
                         break;
                     case 'image':
                         $queryBuilder->andWhere('b.contentType LIKE :ctype')
-                          ->setParameter('ctype', '%image%');
+                            ->setParameter('ctype', '%image%');
                         break;
                     case RemoteAudioHandler::TYPE:
                         $queryBuilder->andWhere('b.contentType = :ctype')
-                          ->setParameter('ctype', RemoteAudioHandler::CONTENT_TYPE);
+                            ->setParameter('ctype', RemoteAudioHandler::CONTENT_TYPE);
                         break;
                     case RemoteSlideHandler::TYPE:
                         $queryBuilder->andWhere('b.contentType = :ctype')
-                          ->setParameter('ctype', RemoteSlideHandler::CONTENT_TYPE);
+                            ->setParameter('ctype', RemoteSlideHandler::CONTENT_TYPE);
                         break;
                     case RemoteVideoHandler::TYPE:
                         $queryBuilder->andWhere('b.contentType = :ctype')
-                          ->setParameter('ctype', RemoteVideoHandler::CONTENT_TYPE);
+                            ->setParameter('ctype', RemoteVideoHandler::CONTENT_TYPE);
                         break;
                 }
             }

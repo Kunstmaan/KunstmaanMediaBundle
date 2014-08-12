@@ -1,10 +1,17 @@
 Upgrade Instructions
 ====================
 
-## To v2.3.X with Gedmo soft deleteable & folder tree
+## To v2.3.X with extra fields, Gedmo soft deleteable & folder tree
 
 When upgrading from a previous version, make sure you update the table structure (```app/console doctrine:schema:update --force```
 or ```app/console doctrine:migrations:diff && app/console doctrine:migrations:migrate```).
+
+A new field to store the original filename was added to the Media table, so you will have to update the table structure
+when upgrading from a version prior to 2.3.X.
+
+You can use ```app/console kuma:media:migrate-name``` to initialize the original filename field for already
+uploaded media (it will just copy the contents of name field into the original_name field, so you could also just
+update this using a simple SQL query).
 
 Also make sure that the gedmo soft delete and timestampable behavior is enabled by checking your app/config.yml file.
 It should contain :

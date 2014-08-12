@@ -29,8 +29,9 @@ class ChooserController extends Controller
      */
     public function chooserIndexAction(Request $request)
     {
-        $em      = $this->getDoctrine()->getManager();
-        $session = $request->getSession();
+        $em       = $this->getDoctrine()->getManager();
+        $session  = $request->getSession();
+        $folderId = false;
 
         $type            = $request->get('type');
         $cKEditorFuncNum = $request->get('CKEditorFuncNum');
@@ -134,10 +135,10 @@ class ChooserController extends Controller
             'type'            => $type,
             'folder'          => $folder,
             'adminlist'       => $adminList,
-            'fileform'        => $this->createTypeFormView($mediaHandler, "file"),
-            'videoform'       => $this->createTypeFormView($mediaHandler, "video"),
-            'slideform'       => $this->createTypeFormView($mediaHandler, "slide"),
-            'audioform'       => $this->createTypeFormView($mediaHandler, "audio")
+            'fileform'        => $this->createTypeFormView($mediaHandler, 'file'),
+            'videoform'       => $this->createTypeFormView($mediaHandler, 'video'),
+            'slideform'       => $this->createTypeFormView($mediaHandler, 'slide'),
+            'audioform'       => $this->createTypeFormView($mediaHandler, 'audio')
         );
     }
 

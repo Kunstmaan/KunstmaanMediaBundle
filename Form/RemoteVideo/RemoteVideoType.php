@@ -47,7 +47,11 @@ class RemoteVideoType extends AbstractType
                 'type',
                 'choice',
                 array(
-                    'choices'     => array('youtube' => 'youtube', 'vimeo' => 'vimeo', 'dailymotion' => 'dailymotion'),
+                    'choices'     => array(
+                        'youtube'     => 'youtube',
+                        'vimeo'       => 'vimeo',
+                        'dailymotion' => 'dailymotion'
+                    ),
                     'constraints' => array(new NotBlank()),
                     'required'    => true
                 )

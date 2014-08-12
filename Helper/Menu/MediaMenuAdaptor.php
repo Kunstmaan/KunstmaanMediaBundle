@@ -64,7 +64,6 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
                         $menuItem->setActive(true);
                     }
                 }
-
                 $children[] = $menuItem;
             }
         }

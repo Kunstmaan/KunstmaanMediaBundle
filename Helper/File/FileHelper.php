@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
  */
 class FileHelper
 {
-
     /**
      * @var Media
      */
@@ -86,6 +85,19 @@ class FileHelper
         $this->media->setDescription($description);
     }
 
+    public function getOriginalFilename()
+    {
+        return $this->media->getOriginalFilename();
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setOriginalFilename($name)
+    {
+        $this->media->setOriginalFilename($name);
+    }
+
     /**
      * @return UploadedFile
      */
@@ -102,7 +114,9 @@ class FileHelper
         $this->file = $file;
         $this->media->setContent($file);
         $this->media->setContentType($file->getMimeType());
-        $this->media->setUrl('/uploads/media/'.$this->media->getUuid() . '.' . $this->media->getContent()->getExtension());
+        $this->media->setUrl(
+            '/uploads/media/' . $this->media->getUuid() . '.' . $this->media->getContent()->getExtension()
+        );
     }
 
     /**
@@ -114,17 +128,17 @@ class FileHelper
     }
 
     /**
-     * @param string $mediaurl
+     * @param string $mediaUrl
      *
      * @throws \Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException
      */
-    public function getMediaFromUrl($mediaurl)
+    public function getMediaFromUrl($mediaUrl)
     {
-        $path = tempnam(sys_get_temp_dir(), 'kuma_');
-        $saveFile = fopen($path, 'w');
+        $path       = tempnam(sys_get_temp_dir(), 'kuma_');
+        $saveFile   = fopen($path, 'w');
         $this->path = $path;
 
-        $ch = curl_init($mediaurl);
+        $ch = curl_init($mediaUrl);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_FILE, $saveFile);
         curl_exec($ch);
@@ -156,5 +170,4 @@ class FileHelper
             unlink($this->path);
         }
     }
-
 }

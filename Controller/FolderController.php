@@ -46,7 +46,7 @@ class FolderController extends Controller
         $mediaManager = $this->get('kunstmaan_media.media_manager');
 
         /* @var Folder $folder */
-        $folder     = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
+        $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
 
         $adminListConfigurator = new MediaAdminListConfigurator($em, null, $mediaManager, $folder, $request);
         $adminList             = $this->get('kunstmaan_adminlist.factory')->createList($adminListConfigurator);
@@ -58,7 +58,7 @@ class FolderController extends Controller
         $editForm = $this->createForm(new FolderType($folder), $folder);
 
         if ($request->isMethod('POST')) {
-            $editForm->submit($request);
+            $editForm->handleRequest($request);
             if ($editForm->isValid()) {
                 $em->getRepository('KunstmaanMediaBundle:Folder')->save($folder);
 
@@ -76,11 +76,11 @@ class FolderController extends Controller
 
         return array(
             'foldermanager' => $this->get('kunstmaan_media.folder_manager'),
-            'mediamanager' => $this->get('kunstmaan_media.media_manager'),
-            'subform'      => $subForm->createView(),
-            'editform'     => $editForm->createView(),
-            'folder'       => $folder,
-            'adminlist'    => $adminList
+            'mediamanager'  => $this->get('kunstmaan_media.media_manager'),
+            'subform'       => $subForm->createView(),
+            'editform'      => $editForm->createView(),
+            'folder'        => $folder,
+            'adminlist'     => $adminList
         );
     }
 
@@ -114,7 +114,9 @@ class FolderController extends Controller
 
         return new RedirectResponse($this->generateUrl(
             'KunstmaanMediaBundle_folder_show',
-            array('folderId' => $folderId)
+            array(
+                'folderId' => $folderId
+            )
         ));
     }
 
@@ -139,7 +141,7 @@ class FolderController extends Controller
         $folder->setParent($parent);
         $form = $this->createForm(new FolderType(), $folder);
         if ($request->isMethod('POST')) {
-            $form->submit($request);
+            $form->handleRequest($request);
             if ($form->isValid()) {
                 $em->getRepository('KunstmaanMediaBundle:Folder')->save($folder);
 
@@ -150,7 +152,9 @@ class FolderController extends Controller
 
                 return new Response('<script>window.location="' . $this->generateUrl(
                         'KunstmaanMediaBundle_folder_show',
-                        array('folderId' => $folder->getId())
+                        array(
+                            'folderId' => $folder->getId()
+                        )
                     ) . '"</script>');
             }
         }

@@ -47,7 +47,7 @@ class RemoteAudioType extends AbstractType
                 'type',
                 'choice',
                 array(
-                    'choices' => array('soundcloud' => 'soundcloud'),
+                    'choices'     => array('soundcloud' => 'soundcloud'),
                     'constraints' => array(new NotBlank()),
                     'required'    => true
                 )

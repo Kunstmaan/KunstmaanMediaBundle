@@ -121,6 +121,12 @@ class Media extends AbstractEntity
      */
     protected $url;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true, name="original_filename")
+     */
+    protected $originalFilename;
 
     /**
      * @var bool
@@ -527,6 +533,26 @@ class Media extends AbstractEntity
     }
 
     /**
+     * @param string $originalFilename
+     *
+     * @return Media
+     */
+    public function setOriginalFilename($originalFilename)
+    {
+        $this->originalFilename = $originalFilename;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalFilename()
+    {
+        return $this->originalFilename;
+    }
+
+    /**
      * @param string $description
      *
      * @return Media
@@ -547,13 +573,14 @@ class Media extends AbstractEntity
     }
 
     /**
-     * @return string
+     * ///ORM\PrePersist
      */
-    public function getClassType()
+    /*
+    public function preInsert()
     {
-        $class     = explode('\\', get_class($this));
-        $classname = end($class);
-
-        return $classname;
+        if (empty($this->name)) {
+            $this->setName($this->getOriginalFilename());
+        }
     }
+    */
 }
