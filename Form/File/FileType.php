@@ -87,7 +87,8 @@ class FileType extends AbstractType
                         )
                     );
                     // Allow changing folder on edit
-                    $form->add('folder',
+                    $form->add(
+                        'folder',
                         'entity',
                         array(
                             'class'         => 'KunstmaanMediaBundle:Folder',
@@ -96,7 +97,6 @@ class FileType extends AbstractType
                                     return $er
                                         ->createQueryBuilder('f')
                                         ->where('f.parent IS NOT NULL')
-                                        ->andWhere('f.deleted != true')
                                         ->orderBy('f.lft');
                                 },
                             'required'      => true,
