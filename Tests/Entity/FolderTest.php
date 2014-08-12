@@ -160,21 +160,10 @@ class FolderTest extends \PHPUnit_Framework_TestCase
         $media = new Media();
         $this->object->addMedia($media);
 
-        $deletedMedia = new Media();
-        $deletedMedia->setDeleted(true);
-        $this->object->addMedia($deletedMedia);
-
         $this->assertCount(1, $this->object->getMedia());
-        $this->assertCount(1, $this->object->getMedia(false));
-        $this->assertCount(2, $this->object->getMedia(true));
 
-        $folderMedia = $this->object->getMedia(false);
+        $folderMedia = $this->object->getMedia();
         $this->assertContains($media, $folderMedia);
-        $this->assertNotContains($deletedMedia, $folderMedia);
-
-        $folderMedia = $this->object->getMedia(true);
-        $this->assertContains($media, $folderMedia);
-        $this->assertContains($deletedMedia, $folderMedia);
     }
 
     /**
@@ -185,26 +174,15 @@ class FolderTest extends \PHPUnit_Framework_TestCase
     {
         $child = new Folder();
 
-        $deletedChild = new Folder();
-        $deletedChild->setDeleted(true);
-
         $children = new ArrayCollection();
         $children->add($child);
-        $children->add($deletedChild);
 
         $this->object->setChildren($children);
 
         $this->assertCount(1, $this->object->getChildren());
-        $this->assertCount(1, $this->object->getChildren(false));
-        $this->assertCount(2, $this->object->getChildren(true));
 
-        $children = $this->object->getChildren(false);
+        $children = $this->object->getChildren();
         $this->assertContains($child, $children);
-        $this->assertNotContains($deletedChild, $children);
-
-        $children = $this->object->getChildren(true);
-        $this->assertContains($child, $children);
-        $this->assertContains($deletedChild, $children);
     }
 
     /**
