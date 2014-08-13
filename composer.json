@@ -33,9 +33,8 @@
     },
     "minimum-stability": "stable",
     "autoload": {
-        "psr-0": { "Kunstmaan\\MediaBundle": "" }
+        "psr-4": { "Kunstmaan\\MediaBundle\\": "" }
     },
-    "target-dir": "Kunstmaan/MediaBundle",
     "extra": {
         "branch-alias": {
             "dev-master": "2.3.x-dev"
