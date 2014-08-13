@@ -12,9 +12,9 @@ use Kunstmaan\AdminBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="Kunstmaan\MediaBundle\Repository\MediaRepository")
  * @ORM\Table(name="kuma_media", indexes={
  *      @ORM\Index(name="idx_name", columns={"name"}),
- *      @ORM\Index(name="idx_deleted_at", columns={"deleted_at"})
+ *      @ORM\Index(name="idx_deleted", columns={"deleted"})
  * })
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @ORM\HasLifecycleCallbacks
  */
 class Media extends AbstractEntity
 {
@@ -83,14 +83,13 @@ class Media extends AbstractEntity
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="created_at")
-     * @Gedmo\Timestampable(on="create")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime
+     *
      * @ORM\Column(type="datetime", name="updated_at")
-     * @Gedmo\Timestampable(on="update")
      */
     protected $updatedAt;
 
@@ -132,22 +131,16 @@ class Media extends AbstractEntity
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     protected $deleted;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
-     */
-    protected $deletedAt;
 
     /**
      * constructor
      */
     public function __construct()
     {
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
         $this->deleted = false;
     }
 
@@ -456,40 +449,19 @@ class Media extends AbstractEntity
      */
     public function isDeleted()
     {
-        return !is_null($this->deletedAt);
+        return $this->deleted;
     }
 
     /**
      * @param bool $deleted
      *
      * @return Media
-     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function setDeleted($deleted)
     {
         $this->deleted = $deleted;
 
         return $this;
-    }
-
-    /**
-     * @param \DateTime $deletedAt
-     *
-     * @return Media
-     */
-    public function setDeletedAt($deletedAt)
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
     }
 
     /**
@@ -573,14 +545,10 @@ class Media extends AbstractEntity
     }
 
     /**
-     * ///ORM\PrePersist
+     * @ORM\PreUpdate
      */
-    /*
-    public function preInsert()
+    public function preUpdate()
     {
-        if (empty($this->name)) {
-            $this->setName($this->getOriginalFilename());
-        }
+        $this->setUpdatedAt(new \DateTime());
     }
-    */
 }

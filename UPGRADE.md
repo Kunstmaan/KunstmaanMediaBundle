@@ -1,7 +1,7 @@
 Upgrade Instructions
 ====================
 
-## To v2.3.X with extra fields, Gedmo soft deleteable & folder tree
+## To v2.3.X with extra fields, indexes and folder tree
 
 When upgrading from a previous version, make sure you update the table structure (
 ```app/console doctrine:schema:update --force```
@@ -11,19 +11,14 @@ A new field to store the original filename was added to the Media table, so you 
 when upgrading from a version prior to 2.3.X.
 
 You can use ```app/console kuma:media:migrate-name``` to initialize the original filename field for already
-uploaded media (it will just copy the contents of name field into the original_name field, so you could also just
-update this using a simple SQL query).
+uploaded media (it will just copy the contents of name field into the original_filename field, so you could also just
+update this using a simple SQL query if you want).
 
-Also make sure that the gedmo soft delete and timestampable behavior is enabled by checking your app/config.yml file.
-It should contain :
-https://github.com/Kunstmaan/KunstmaanBundlesStandardEdition/pull/71/files
+The Folder entity has been refactored to be a nested tree, which should speed up the media section (this will
+especially be noticeable if you have lots of media folders).
 
-Afterwards run
-- ```app/console kuma:media:migrate-soft-deletes``` to migrate the soft deletes
-- ```app/console kuma:media:rebuild-folder-tree``` to initialize the folder tree
+To migrate your current media tree to the new format, you have to execute ```app/console kuma:media:rebuild-folder-tree```
+to initialize the folder tree. If you decide to undelete folders you should run this command as well.
 
-The media section should now be much faster then before (this will especially be noticeable if you have lots of media
-folders).
-
-If you upgrade and want to create PDF preview images for PDF files that have already been uploaded, you can run
-the ```app/console kuma:media:create-pdf-previews``` command.
+If you want to create PDF preview images for PDF files that have already been uploaded  (provided that you have the
+necessary PDF support enabled), you can run the ```app/console kuma:media:create-pdf-previews``` command.

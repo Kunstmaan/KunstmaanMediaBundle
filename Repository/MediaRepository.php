@@ -17,7 +17,6 @@ class MediaRepository extends EntityRepository
     public function save(Media $media)
     {
         $em = $this->getEntityManager();
-
         $em->persist($media);
         $em->flush();
     }
@@ -28,7 +27,8 @@ class MediaRepository extends EntityRepository
     public function delete(Media $media)
     {
         $em = $this->getEntityManager();
-        $em->remove($media);
+        $media->setDeleted(true);
+        $em->persist($media);
         $em->flush();
     }
 

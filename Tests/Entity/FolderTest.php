@@ -82,16 +82,15 @@ class FolderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Kunstmaan\MediaBundle\Entity\Folder::setDeletedAt
-     * @covers Kunstmaan\MediaBundle\Entity\Folder::getDeletedAt
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::setDeleted
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::isDeleted
      */
-    public function testGetSetDeletedAt()
+    public function testGetSetDeleted()
     {
-        $this->assertEquals(null, $this->object->getDeletedAt());
+        $this->assertFalse($this->object->isDeleted());
 
-        $now = new \DateTime();
-        $this->object->setDeletedAt($now);
-        $this->assertEquals($now, $this->object->getDeletedAt());
+        $this->object->setDeleted(true);
+        $this->assertTrue($this->object->isDeleted());
     }
 
     /**
@@ -160,10 +159,21 @@ class FolderTest extends \PHPUnit_Framework_TestCase
         $media = new Media();
         $this->object->addMedia($media);
 
-        $this->assertCount(1, $this->object->getMedia());
+        $deletedMedia = new Media();
+        $deletedMedia->setDeleted(true);
+        $this->object->addMedia($deletedMedia);
 
-        $folderMedia = $this->object->getMedia();
+        $this->assertCount(1, $this->object->getMedia());
+        $this->assertCount(1, $this->object->getMedia(false));
+        $this->assertCount(2, $this->object->getMedia(true));
+
+        $folderMedia = $this->object->getMedia(false);
         $this->assertContains($media, $folderMedia);
+        $this->assertNotContains($deletedMedia, $folderMedia);
+
+        $folderMedia = $this->object->getMedia(true);
+        $this->assertContains($media, $folderMedia);
+        $this->assertContains($deletedMedia, $folderMedia);
     }
 
     /**
@@ -174,15 +184,26 @@ class FolderTest extends \PHPUnit_Framework_TestCase
     {
         $child = new Folder();
 
+        $deletedChild = new Folder();
+        $deletedChild->setDeleted(true);
+
         $children = new ArrayCollection();
         $children->add($child);
+        $children->add($deletedChild);
 
         $this->object->setChildren($children);
 
         $this->assertCount(1, $this->object->getChildren());
+        $this->assertCount(1, $this->object->getChildren(false));
+        $this->assertCount(2, $this->object->getChildren(true));
 
-        $children = $this->object->getChildren();
+        $children = $this->object->getChildren(false);
         $this->assertContains($child, $children);
+        $this->assertNotContains($deletedChild, $children);
+
+        $children = $this->object->getChildren(true);
+        $this->assertContains($child, $children);
+        $this->assertContains($deletedChild, $children);
     }
 
     /**
@@ -219,5 +240,50 @@ class FolderTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->setInternalName('internal_name');
         $this->assertEquals('internal_name', $this->object->getInternalName());
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::setLeft
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::getLeft
+     */
+    public function testGetSetLeft()
+    {
+        $this->assertEquals(0, $this->object->getLeft());
+        $this->object->setLeft(1);
+        $this->assertEquals(1, $this->object->getLeft());
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::setRight
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::getRight
+     */
+    public function testGetSetRight()
+    {
+        $this->assertEquals(0, $this->object->getRight());
+        $this->object->setRight(2);
+        $this->assertEquals(2, $this->object->getRight());
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::setLevel
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::getLevel
+     */
+    public function testGetSetLevel()
+    {
+        $this->assertEquals(0, $this->object->getLevel());
+        $this->object->setLevel(1);
+        $this->assertEquals(1, $this->object->getLevel());
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Folder::getOptionLabel
+     */
+    public function testGetOptionLabel()
+    {
+        $this->object
+            ->setName('Test')
+            ->setLevel(2);
+
+        $this->assertEquals('-- Test', $this->object->getOptionLabel());
     }
 }

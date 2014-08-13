@@ -134,16 +134,15 @@ class MediaTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Kunstmaan\MediaBundle\Entity\Media::setDeletedAt
-     * @covers Kunstmaan\MediaBundle\Entity\Media::getDeletedAt
+     * @covers Kunstmaan\MediaBundle\Entity\Media::setDeleted
+     * @covers Kunstmaan\MediaBundle\Entity\Media::isDeleted
      */
-    public function testGetSetDeletedAt()
+    public function testGetSetDeleted()
     {
-        $this->assertEquals(null, $this->object->getDeletedAt());
+        $this->assertFalse($this->object->isDeleted());
 
-        $now = new \DateTime();
-        $this->object->setDeletedAt($now);
-        $this->assertEquals($now, $this->object->getDeletedAt());
+        $this->object->setDeleted(true);
+        $this->assertTrue($this->object->isDeleted());
     }
 
     /**
@@ -181,5 +180,25 @@ class MediaTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->setOriginalFilename('name.ext');
         $this->assertEquals('name.ext', $this->object->getOriginalFilename());
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Media::getCopyright
+     * @covers Kunstmaan\MediaBundle\Entity\Media::setCopyright
+     */
+    public function testGetSetCopyright()
+    {
+        $this->object->setCopyright('(c) 2014 Kunstmaan All rights reserved');
+        $this->assertEquals('(c) 2014 Kunstmaan All rights reserved', $this->object->getCopyright());
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Entity\Media::getDescription
+     * @covers Kunstmaan\MediaBundle\Entity\Media::setDescription
+     */
+    public function testGetSetDescription()
+    {
+        $this->object->setDescription('Description of this picture');
+        $this->assertEquals('Description of this picture', $this->object->getDescription());
     }
 }

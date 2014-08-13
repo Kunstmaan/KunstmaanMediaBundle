@@ -16,10 +16,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="kuma_folders", indexes={
  *      @ORM\Index(name="idx_internal_name", columns={"internal_name"}),
  *      @ORM\Index(name="idx_name", columns={"name"}),
- *      @ORM\Index(name="idx_deleted_at", columns={"deleted_at"})
+ *      @ORM\Index(name="idx_deleted", columns={"deleted"})
  * })
  * @Gedmo\Tree(type="nested")
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @ORM\HasLifecycleCallbacks
  */
 class Folder extends AbstractEntity implements GedmoNode
 {
@@ -70,7 +70,6 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="created_at")
-     * @Gedmo\Timestampable(on="create")
      */
     protected $createdAt;
 
@@ -78,7 +77,6 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="updated_at")
-     * @Gedmo\Timestampable(on="update")
      */
     protected $updatedAt;
 
@@ -124,16 +122,8 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     protected $deleted;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
-     */
-    protected $deletedAt;
 
     /**
      * constructor
@@ -142,6 +132,8 @@ class Folder extends AbstractEntity implements GedmoNode
     {
         $this->children = new ArrayCollection();
         $this->media    = new ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
         $this->deleted  = false;
     }
 
@@ -291,7 +283,6 @@ class Folder extends AbstractEntity implements GedmoNode
      * @param bool $deleted
      *
      * @return Folder
-     * @deprecated Using Gedmo SoftDeleteableInterface now
      */
     public function setDeleted($deleted)
     {
@@ -317,11 +308,25 @@ class Folder extends AbstractEntity implements GedmoNode
     /**
      * Get media
      *
+     * @param bool $includeDeleted
+     *
      * @return ArrayCollection
      */
-    public function getMedia()
+    public function getMedia($includeDeleted = false)
     {
-        return $this->media;
+        if ($includeDeleted) {
+            return $this->media;
+        }
+
+        return $this->media->filter(
+            function (Media $entry) {
+                if ($entry->isDeleted()) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
     }
 
     /**
@@ -341,11 +346,27 @@ class Folder extends AbstractEntity implements GedmoNode
     }
 
     /**
+     * Get child folders
+     *
+     * @param bool $includeDeleted
+     *
      * @return ArrayCollection
      */
-    public function getChildren()
+    public function getChildren($includeDeleted = false)
     {
-        return $this->children;
+        if ($includeDeleted) {
+            return $this->children;
+        }
+
+        return $this->children->filter(
+            function (Folder $entry) {
+                if ($entry->isDeleted()) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
     }
 
     /**
@@ -365,27 +386,7 @@ class Folder extends AbstractEntity implements GedmoNode
      */
     public function isDeleted()
     {
-        return !is_null($this->deletedAt);
-    }
-
-    /**
-     * @param \DateTime|null $deletedAt
-     *
-     * @return Folder
-     */
-    public function setDeletedAt($deletedAt)
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
+        return $this->deleted;
     }
 
     /**
@@ -502,8 +503,16 @@ class Folder extends AbstractEntity implements GedmoNode
     public function getOptionLabel()
     {
         return str_repeat(
-            html_entity_decode('&nbsp;', ENT_QUOTES, 'UTF-8'),
-            $this->getLevel() * 2
-        ) . $this->getName();
+            '-',
+            $this->getLevel()
+        ) . ' ' . $this->getName();
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->setUpdatedAt(new \DateTime());
     }
 }

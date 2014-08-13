@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Kunstmaan\MediaBundle\Entity\Folder;
+use Kunstmaan\MediaBundle\Entity\Media;
 
 /**
  * FolderRepository
@@ -19,7 +20,7 @@ class FolderRepository extends NestedTreeRepository
      */
     public function save(Folder $folder)
     {
-        $em     = $this->getEntityManager();
+        $em = $this->getEntityManager();
         $parent = $folder->getParent();
 
         $em->beginTransaction();
@@ -61,33 +62,39 @@ class FolderRepository extends NestedTreeRepository
 
         $this->deleteMedia($folder, $em);
         $this->deleteChildren($folder, $em);
-        $em->remove($folder);
+        $folder->setDeleted(true);
+        $em->persist($folder);
         $em->flush();
+        $this->rebuildTree();
     }
 
     /**
      * @param Folder $folder
      */
-    public function deleteMedia(Folder $folder)
+    private function deleteMedia(Folder $folder)
     {
         $em = $this->getEntityManager();
 
-        foreach ($folder->getMedia() as $item) {
-            $em->remove($item);
+        /** @var Media $media */
+        foreach ($folder->getMedia() as $media) {
+            $media->setDeleted(true);
+            $em->persist($media);
         }
     }
 
     /**
      * @param Folder $folder
      */
-    public function deleteChildren(Folder $folder)
+    private function deleteChildren(Folder $folder)
     {
         $em = $this->getEntityManager();
 
+        /** @var Folder $child */
         foreach ($folder->getChildren() as $child) {
             $this->deleteMedia($child, $em);
             $this->deleteChildren($child, $em);
-            $em->remove($child);
+            $child->setDeleted(true);
+            $em->persist($child);
         }
     }
 
@@ -100,7 +107,7 @@ class FolderRepository extends NestedTreeRepository
     {
         $qb = $this->createQueryBuilder('folder')
             ->select('folder')
-            ->where('folder.parent is null')
+            ->where('folder.parent is null AND folder.deleted != true')
             ->orderBy('folder.name');
 
         if (false === is_null($limit)) {
@@ -146,5 +153,124 @@ class FolderRepository extends NestedTreeRepository
         $ids    = array_map('current', $result);
 
         return $ids;
+    }
+
+    /**
+     * @param string $sortByField
+     * @param string $direction
+     *
+     * @return QueryBuilder
+     */
+    public function getRootNodesQueryBuilder($sortByField = null, $direction = 'asc')
+    {
+        /** @var QueryBuilder $qb */
+        $qb = parent::getRootNodesQueryBuilder($sortByField, $direction);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    /**
+     * @param object $node
+     *
+     * @return QueryBuilder
+     */
+    public function getPathQueryBuilder($node)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = parent::getPathQueryBuilder($node);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    /**
+     * @param object $node
+     * @param bool   $direct
+     * @param string $sortByField
+     * @param string $direction
+     * @param bool   $includeNode
+     *
+     * @return QueryBuilder
+     */
+    public function childrenQueryBuilder(
+        $node = null,
+        $direct = false,
+        $sortByField = null,
+        $direction = 'ASC',
+        $includeNode = false
+    ) {
+        /** @var QueryBuilder $qb */
+        $qb = parent::childrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    /**
+     * @param object $root
+     * @param string $sortByField
+     * @param string $direction
+     *
+     * @return QueryBuilder
+     */
+    public function getLeafsQueryBuilder($root = null, $sortByField = null, $direction = 'ASC')
+    {
+        /** @var QueryBuilder $qb */
+        $qb = parent::getLeafsQueryBuilder($root, $sortByField, $direction);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    public function getNextSiblingsQueryBuilder($node, $includeSelf = false)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = parent::getNextSiblingsQueryBuilder($node, $includeSelf);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    public function getPrevSiblingsQueryBuilder($node, $includeSelf = false)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = parent::getPrevSiblingsQueryBuilder($node, $includeSelf);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    public function rebuildTree()
+    {
+        $em = $this->getEntityManager();
+
+        // Reset tree...
+        $sql  = 'UPDATE kuma_folders SET lvl=NULL,lft=NULL,rgt=NULL';
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        $folders = $this->findBy(array('deleted' => false), array('parent' => 'ASC', 'name' => 'asc'));
+
+        $rootFolder = $folders[0];
+        $first = true;
+        foreach ($folders as $folder) {
+            // Force parent load
+            $parent = $folder->getParent();
+            if (is_null($parent)) {
+                $folder->setLevel(0);
+                if ($first) {
+                    $this->persistAsFirstChild($folder);
+                    $first = false;
+                } else {
+                    $this->persistAsNextSiblingOf($folder, $rootFolder);
+                }
+            } else {
+                $folder->setLevel($parent->getLevel() + 1);
+                $this->persistAsLastChildOf($folder, $parent);
+            }
+            $em->persist($folder);
+        }
+        $em->flush();
     }
 }

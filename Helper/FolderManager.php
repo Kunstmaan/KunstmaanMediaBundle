@@ -1,9 +1,4 @@
 <?php
-/**
- * Created by Kunstmaan.
- * Date: 10/07/14
- * Time: 10:16
- */
 
 namespace Kunstmaan\MediaBundle\Helper;
 
@@ -14,9 +9,6 @@ class FolderManager
 {
     /** @var FolderRepository $repository */
     private $repository;
-
-    /** @var Folder $folder */
-    private $folder;
 
     /** @var Folder[] $rootFolder */
     private $rootFolder;
