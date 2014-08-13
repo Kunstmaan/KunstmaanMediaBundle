@@ -10,15 +10,6 @@ class FolderManager
     /** @var FolderRepository $repository */
     private $repository;
 
-    /** @var Folder[] $rootFolder */
-    private $rootFolder;
-
-    /** @var array */
-    private $hierarchy;
-
-    /** @var array */
-    private $parentIds;
-
     /**
      * @var FolderRepository $repository
      */
@@ -29,30 +20,24 @@ class FolderManager
 
     public function getFolderHierarchy(Folder $rootFolder)
     {
-        if (!isset($this->hierarchy[$rootFolder->getId()])) {
-            $this->hierarchy[$rootFolder->getId()] = $this->repository->childrenHierarchy($rootFolder);
-        }
-
-        return $this->hierarchy[$rootFolder->getId()];
+        return $this->repository->childrenHierarchy($rootFolder);
     }
 
     public function getRootFolderFor(Folder $folder)
     {
-        if (!isset($this->rootFolder[$folder->getId()])) {
-            $parentIds = $this->getParentIds($folder);
-            $this->rootFolder[$folder->getId()] = $this->repository->getFolder($parentIds[0]);
-        }
+        $parentIds = $this->getParentIds($folder);
 
-        return $this->rootFolder[$folder->getId()];
+        return $this->repository->getFolder($parentIds[0]);
     }
 
     public function getParentIds(Folder $folder)
     {
-        if (!isset($this->parentIds[$folder->getId()])) {
-            $this->parentIds[$folder->getId()] = $this->repository->getParentIds($folder);
-        }
+        return $this->repository->getParentIds($folder);
+    }
 
-        return $this->parentIds[$folder->getId()];
+    public function getParents(Folder $folder)
+    {
+        return $this->repository->getPath($folder);
     }
 
 }

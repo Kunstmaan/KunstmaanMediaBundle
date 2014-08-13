@@ -1,6 +1,15 @@
 {% extends 'KunstmaanAdminListBundle:Default:list.html.twig' %}
 
-{% block extra_actions_header %}{% endblock %}
+{% block header %}
+    <div class="page-header">
+        <h1>{{ folder.name }} {% block page_header_addition %}{% endblock %}</h1>
+        {% block extra_actions_header %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'KunstmaanMediaBundle:Folder:breadcrumbs.html.twig' %}
+{% endblock %}
 
 {% block sidebar %}
     <aside id="sidebar" class="sidebar">

@@ -54,7 +54,7 @@ class Folder extends AbstractEntity implements GedmoNode
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Folder", mappedBy="parent", fetch="LAZY")
-     * @ORM\OrderBy({"name" = "ASC"})
+     * @ORM\OrderBy({"lft" = "ASC"})
      */
     protected $children;
 

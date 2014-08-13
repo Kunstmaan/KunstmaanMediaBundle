@@ -551,4 +551,14 @@ class Media extends AbstractEntity
     {
         $this->setUpdatedAt(new \DateTime());
     }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        if (empty($this->name)) {
+            $this->setName($this->getOriginalFilename());
+        }
+    }
 }

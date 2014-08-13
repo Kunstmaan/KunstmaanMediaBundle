@@ -3,6 +3,7 @@
 namespace Kunstmaan\MediaBundle\Repository;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Kunstmaan\MediaBundle\Entity\Folder;
@@ -20,13 +21,13 @@ class FolderRepository extends NestedTreeRepository
      */
     public function save(Folder $folder)
     {
-        $em = $this->getEntityManager();
+        $em     = $this->getEntityManager();
         $parent = $folder->getParent();
 
         $em->beginTransaction();
         try {
             // Find where to insert the new item
-            $children = $parent->getChildren();
+            $children = $parent->getChildren(true);
             if ($children->isEmpty()) {
                 // No children yet - insert as first child
                 $this->persistAsFirstChildOf($folder, $parent);
@@ -65,7 +66,6 @@ class FolderRepository extends NestedTreeRepository
         $folder->setDeleted(true);
         $em->persist($folder);
         $em->flush();
-        $this->rebuildTree();
     }
 
     /**
@@ -156,10 +156,7 @@ class FolderRepository extends NestedTreeRepository
     }
 
     /**
-     * @param string $sortByField
-     * @param string $direction
-     *
-     * @return QueryBuilder
+     * {@inheritdoc}
      */
     public function getRootNodesQueryBuilder($sortByField = null, $direction = 'asc')
     {
@@ -171,9 +168,7 @@ class FolderRepository extends NestedTreeRepository
     }
 
     /**
-     * @param object $node
-     *
-     * @return QueryBuilder
+     * {@inheritdoc}
      */
     public function getPathQueryBuilder($node)
     {
@@ -185,13 +180,7 @@ class FolderRepository extends NestedTreeRepository
     }
 
     /**
-     * @param object $node
-     * @param bool   $direct
-     * @param string $sortByField
-     * @param string $direction
-     * @param bool   $includeNode
-     *
-     * @return QueryBuilder
+     * {@inheritdoc}
      */
     public function childrenQueryBuilder(
         $node = null,
@@ -208,11 +197,7 @@ class FolderRepository extends NestedTreeRepository
     }
 
     /**
-     * @param object $root
-     * @param string $sortByField
-     * @param string $direction
-     *
-     * @return QueryBuilder
+     * {@inheritdoc}
      */
     public function getLeafsQueryBuilder($root = null, $sortByField = null, $direction = 'ASC')
     {
@@ -223,6 +208,9 @@ class FolderRepository extends NestedTreeRepository
         return $qb;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getNextSiblingsQueryBuilder($node, $includeSelf = false)
     {
         /** @var QueryBuilder $qb */
@@ -232,6 +220,9 @@ class FolderRepository extends NestedTreeRepository
         return $qb;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPrevSiblingsQueryBuilder($node, $includeSelf = false)
     {
         /** @var QueryBuilder $qb */
@@ -239,6 +230,36 @@ class FolderRepository extends NestedTreeRepository
         $qb->andWhere('node.deleted != true');
 
         return $qb;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNodesHierarchyQueryBuilder(
+        $node = null,
+        $direct = false,
+        array $options = array(),
+        $includeNode = false
+    ) {
+        /** @var QueryBuilder $qb */
+        $qb = parent::getNodesHierarchyQueryBuilder($node, $direct, $options, $includeNode);
+        $qb->andWhere('node.deleted != true');
+
+        return $qb;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNodesHierarchy($node = null, $direct = false, array $options = array(), $includeNode = false)
+    {
+        $query = $this->getNodesHierarchyQuery($node, $direct, $options, $includeNode);
+        $query->setHint(
+            Query::HINT_CUSTOM_OUTPUT_WALKER,
+            'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+        );
+
+        return $query->getArrayResult();
     }
 
     public function rebuildTree()
@@ -250,10 +271,10 @@ class FolderRepository extends NestedTreeRepository
         $stmt = $em->getConnection()->prepare($sql);
         $stmt->execute();
 
-        $folders = $this->findBy(array('deleted' => false), array('parent' => 'ASC', 'name' => 'asc'));
+        $folders = $this->findBy(array(), array('parent' => 'ASC', 'name' => 'asc'));
 
         $rootFolder = $folders[0];
-        $first = true;
+        $first      = true;
         foreach ($folders as $folder) {
             // Force parent load
             $parent = $folder->getParent();
@@ -269,7 +290,6 @@ class FolderRepository extends NestedTreeRepository
                 $folder->setLevel($parent->getLevel() + 1);
                 $this->persistAsLastChildOf($folder, $parent);
             }
-            $em->persist($folder);
         }
         $em->flush();
     }
