@@ -67,10 +67,12 @@ class FolderController extends Controller
                     'Folder \'' . $folder->getName() . '\' has been updated!'
                 );
 
-                return new RedirectResponse($this->generateUrl(
-                    'KunstmaanMediaBundle_folder_show',
-                    array('folderId' => $folderId)
-                ));
+                return new RedirectResponse(
+                    $this->generateUrl(
+                        'KunstmaanMediaBundle_folder_show',
+                        array('folderId' => $folderId)
+                    )
+                );
             }
         }
 
@@ -112,12 +114,14 @@ class FolderController extends Controller
             $folderId = $parentFolder->getId();
         }
 
-        return new RedirectResponse($this->generateUrl(
-            'KunstmaanMediaBundle_folder_show',
-            array(
-                'folderId' => $folderId
+        return new RedirectResponse(
+            $this->generateUrl(
+                'KunstmaanMediaBundle_folder_show',
+                array(
+                    'folderId' => $folderId
+                )
             )
-        ));
+        );
     }
 
     /**
@@ -158,7 +162,8 @@ class FolderController extends Controller
                             'folderId' => $folder->getId()
                         )
                     ) .
-                    '"</script>');
+                    '"</script>'
+                );
             }
         }
 

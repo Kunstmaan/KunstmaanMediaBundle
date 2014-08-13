@@ -11,6 +11,15 @@ use Kunstmaan\MediaBundle\Entity\Media;
 
 /**
  * FolderRepository
+ *
+ * @method FolderRepository persistAsFirstChild(object $node)
+ * @method FolderRepository persistAsFirstChildOf(object $node, object $parent)
+ * @method FolderRepository persistAsLastChild(object $node)
+ * @method FolderRepository persistAsLastChildOf(object $node, object $parent)
+ * @method FolderRepository persistAsNextSibling(object $node)
+ * @method FolderRepository persistAsNextSiblingOf(object $node, object $sibling)
+ * @method FolderRepository persistAsPrevSibling(object $node)
+ * @method FolderRepository persistAsPrevSiblingOf(object $node, object $sibling)
  */
 class FolderRepository extends NestedTreeRepository
 {
@@ -262,6 +271,9 @@ class FolderRepository extends NestedTreeRepository
         return $query->getArrayResult();
     }
 
+    /**
+     * Rebuild the nested tree
+     */
     public function rebuildTree()
     {
         $em = $this->getEntityManager();
@@ -294,6 +306,13 @@ class FolderRepository extends NestedTreeRepository
         $em->flush();
     }
 
+    /**
+     * Used as querybuilder for Folder entity selectors
+     *
+     * @param Folder $ignoreSubtree Folder (with children) that has to be filtered out (optional)
+     *
+     * @return QueryBuilder
+     */
     public function selectFolderQueryBuilder(Folder $ignoreSubtree = null)
     {
         /** @var QueryBuilder $qb */

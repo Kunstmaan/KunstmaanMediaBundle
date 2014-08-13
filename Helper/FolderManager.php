@@ -59,5 +59,4 @@ class FolderManager
     {
         return $this->repository->getPath($folder);
     }
-
 }

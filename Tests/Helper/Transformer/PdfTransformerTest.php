@@ -10,10 +10,17 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class PdfTransformerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var PdfTransformer
-     */
+    /** @var PdfTransformer */
     protected $object;
+
+    /** @var Filesystem  */
+    protected $filesystem;
+
+    /** @var string */
+    protected $filesDir;
+
+    /** @var string */
+    protected $tempDir;
 
     /**
      * @covers Kunstmaan\MediaBundle\Helper\Transformer\PdfTransformer::__construct

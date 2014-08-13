@@ -4,6 +4,7 @@ namespace Kunstmaan\MediaBundle\Tests\Helper\File;
 
 use Kunstmaan\MediaBundle\Entity\Media;
 use Kunstmaan\MediaBundle\Helper\File\PdfHandler;
+use Kunstmaan\MediaBundle\Helper\Transformer\PreviewTransformerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -12,10 +13,13 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class PdfHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var PdfHandler
-     */
+    /** @var PdfHandler */
     protected $object;
+
+    protected $pdfTransformer;
+
+    /** @var string */
+    protected $filesDir;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

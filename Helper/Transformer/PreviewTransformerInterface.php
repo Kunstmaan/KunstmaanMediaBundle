@@ -9,10 +9,9 @@ interface PreviewTransformerInterface extends TransformerInterface
     /**
      * Return the path of the preview file.
      *
-     * @param $absolutePath
+     * @param string $absolutePath
      *
      * @return string
      */
     public function getPreviewFilename($absolutePath);
-
 }

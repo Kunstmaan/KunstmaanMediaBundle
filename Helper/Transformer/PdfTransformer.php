@@ -41,7 +41,7 @@ class PdfTransformer implements PreviewTransformerInterface
     }
 
     /**
-     * @param $absolutePath
+     * @param string $absolutePath
      *
      * @return string
      */
