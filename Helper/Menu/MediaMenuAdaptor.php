@@ -3,12 +3,12 @@
 namespace Kunstmaan\MediaBundle\Helper\Menu;
 
 use Doctrine\ORM\EntityManager;
+use Kunstmaan\MediaBundle\Repository\FolderRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Kunstmaan\AdminBundle\Helper\Menu\MenuItem;
 use Kunstmaan\AdminBundle\Helper\Menu\MenuAdaptorInterface;
 use Kunstmaan\AdminBundle\Helper\Menu\MenuBuilder;
 use Kunstmaan\AdminBundle\Helper\Menu\TopMenuItem;
-use Kunstmaan\MediaBundle\Entity\Media;
 use Kunstmaan\MediaBundle\Entity\Folder;
 
 /**
@@ -17,16 +17,16 @@ use Kunstmaan\MediaBundle\Entity\Folder;
 class MediaMenuAdaptor implements MenuAdaptorInterface
 {
     /**
-     * @var EntityManager
+     * @var FolderRepository $repo
      */
-    private $em;
+    private $repo;
 
     /**
-     * @param EntityManager $em
+     * @param FolderRepository $repo
      */
-    public function __construct($em)
+    public function __construct($repo)
     {
-        $this->em = $em;
+        $this->repo = $repo;
     }
 
     /**
@@ -41,14 +41,15 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
     {
         if (is_null($parent)) {
             // Add menu item for root gallery
-            $rootFolders   = $this->em->getRepository('KunstmaanMediaBundle:Folder')->getRootNodes();
+            $rootFolders   = $this->repo->getRootNodes();
             $currentId     = $request->get('folderId');
             $currentFolder = null;
             if (isset($currentId)) {
                 /* @var Folder $currentFolder */
-                $currentFolder = $this->em->getRepository('KunstmaanMediaBundle:Folder')->findOneById($currentId);
+                $currentFolder = $this->repo->findOneById($currentId);
             }
 
+            /** @var Folder $rootFolder */
             foreach ($rootFolders as $rootFolder) {
                 $menuItem = new TopMenuItem($menu);
                 $menuItem
@@ -59,7 +60,7 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
                     ->setRole($rootFolder->getRel());
 
                 if (!is_null($currentFolder)) {
-                    $parentIds = $this->em->getRepository('KunstmaanMediaBundle:Folder')->getParentIds($currentFolder);
+                    $parentIds = $this->repo->getParentIds($currentFolder);
                     if (in_array($rootFolder->getId(), $parentIds)) {
                         $menuItem->setActive(true);
                     }

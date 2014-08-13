@@ -36,7 +36,6 @@ class ChooserController extends Controller
         $type            = $request->get('type');
         $cKEditorFuncNum = $request->get('CKEditorFuncNum');
         $linkChooser     = $request->get('linkChooser');
-        $folderId        = false;
 
         // Go to the last visited folder
         if ($session->get('last-media-folder')) {
@@ -109,7 +108,7 @@ class ChooserController extends Controller
         /* @var MediaManager $mediaManager */
         $mediaManager = $this->get('kunstmaan_media.media_manager');
 
-        $adminListConfigurator = new MediaAdminListConfigurator($em, null, $mediaManager, $folder, $request);
+        $adminListConfigurator = new MediaAdminListConfigurator($em, $mediaManager, $folder, $request);
         $adminList             = $this->get('kunstmaan_adminlist.factory')->createList($adminListConfigurator);
         $adminList->bindRequest($request);
 
@@ -156,5 +155,4 @@ class ChooserController extends Controller
 
         return $this->createForm($handler->getFormType(), $helper)->createView();
     }
-
 }

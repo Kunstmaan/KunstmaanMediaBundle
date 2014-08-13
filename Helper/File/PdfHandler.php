@@ -79,7 +79,7 @@ class PdfHandler extends FileHandler
         try {
             // Generate preview for PDF
             $this->pdfTransformer->apply($this->webPath . $media->getUrl());
-        } catch(\ImagickException $e) {
+        } catch (\ImagickException $e) {
             // Fail silently ()
         }
     }

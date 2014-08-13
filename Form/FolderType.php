@@ -5,6 +5,7 @@ namespace Kunstmaan\MediaBundle\Form;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Kunstmaan\MediaBundle\Entity\Folder;
+use Kunstmaan\MediaBundle\Repository\FolderRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -64,26 +65,9 @@ class FolderType extends AbstractType
                     'class'         => 'KunstmaanMediaBundle:Folder',
                     'property'      => 'optionLabel',
                     'required'      => true,
-                    'query_builder' => function (EntityRepository $er) use ($folder) {
-                            /** @var QueryBuilder $qb */
-                            $qb = $er->createQueryBuilder('f');
-                            $qb->where('f.deleted != true')
-                                ->orderBy('f.lft');
-
-                            // Fetch all folders except the current one and its children
-                            if (!is_null($folder) && $folder->getId() !== null) {
-                                $orX = $qb->expr()->orX();
-                                $orX
-                                    ->add('f.rgt > :right')
-                                    ->add('f.lft < :left');
-
-                                $qb->where($orX)
-                                    ->setParameter('left', $folder->getLeft())
-                                    ->setParameter('right', $folder->getRight());
-                            }
-
-                            return $qb;
-                        }
+                    'query_builder' => function (FolderRepository $er) use ($folder) {
+                            return $er->selectFolderQueryBuilder($folder);
+                    }
                 )
             );
     }

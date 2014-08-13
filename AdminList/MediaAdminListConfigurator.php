@@ -35,19 +35,17 @@ class MediaAdminListConfigurator extends AbstractDoctrineORMAdminListConfigurato
 
     /**
      * @param EntityManager $em           The entity manager
-     * @param AclHelper     $aclHelper    The acl helper
      * @param MediaManager  $mediaManager The media manager
      * @param Folder        $folder       The current folder
      * @param Request       $request      The request object
      */
     public function __construct(
         EntityManager $em,
-        AclHelper $aclHelper = null,
         MediaManager $mediaManager,
         Folder $folder,
         Request $request
     ) {
-        parent::__construct($em, $aclHelper);
+        parent::__construct($em);
 
         $this->setAdminType(new MediaType($mediaManager, $em));
         $this->folder  = $folder;

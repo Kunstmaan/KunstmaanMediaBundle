@@ -28,6 +28,9 @@
         "knplabs/knp-menu-bundle": "2.0.*@dev",
         "friendsofsymfony/user-bundle": "2.0.*@dev"
     },
+    "suggest": {
+        "ext-imagick": "to support PDF preview images"
+    },
     "minimum-stability": "stable",
     "autoload": {
         "psr-0": { "Kunstmaan\\MediaBundle": "" }

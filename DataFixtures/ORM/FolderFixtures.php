@@ -62,7 +62,7 @@ class FolderFixtures extends AbstractFixture implements OrderedFixtureInterface
         $manager->persist($subgal);
         $manager->flush();
 
-        $subgal = new Folder($manager);
+        $subgal = new Folder();
         $subgal->setParent($gal);
         $subgal->setRel('files');
         $subgal->setName('Files');
@@ -83,7 +83,7 @@ class FolderFixtures extends AbstractFixture implements OrderedFixtureInterface
         $manager->persist($subgal);
         $manager->flush();
 
-        $subgal = new Folder($manager);
+        $subgal = new Folder();
         $subgal->setParent($gal);
         $subgal->setRel('slideshow');
         $subgal->setName('Slides');
@@ -104,7 +104,7 @@ class FolderFixtures extends AbstractFixture implements OrderedFixtureInterface
         $manager->persist($subgal);
         $manager->flush();
 
-        $subgal = new Folder($manager);
+        $subgal = new Folder();
         $subgal->setParent($gal);
         $subgal->setRel('video');
         $subgal->setName('Videos');
@@ -135,5 +135,4 @@ class FolderFixtures extends AbstractFixture implements OrderedFixtureInterface
     {
         return 1;
     }
-
 }

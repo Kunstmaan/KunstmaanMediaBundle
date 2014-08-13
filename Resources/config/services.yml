@@ -24,12 +24,6 @@ services:
         calls:
             - [ setDefaultHandler, [ "@kunstmaan_media.media_handlers.file" ] ]
 
-    kunstmaan_media.menu.adaptor:
-        class: "%kunstmaan_media.menu.adaptor.class%"
-        arguments: ["@doctrine.orm.entity_manager"]
-        tags:
-            -  { name: 'kunstmaan_admin.menu.adaptor' }
-
     kunstmaan_media.listener.doctrine:
         class: "%kunstmaan_media.listener.doctrine.class%"
         arguments: ["@kunstmaan_media.media_manager"]
@@ -74,6 +68,12 @@ services:
         factory_service:  "doctrine.orm.entity_manager"
         factory_method:   getRepository
         arguments:        ["KunstmaanMediaBundle:Folder"]
+
+    kunstmaan_media.menu.adaptor:
+        class: "%kunstmaan_media.menu.adaptor.class%"
+        arguments: ["@kunstmaan_media.repository.folder"]
+        tags:
+            -  { name: 'kunstmaan_admin.menu.adaptor' }
 
     kunstmaan_media.folder_manager:
         class: "%kunstmaan_media.folder_manager.class%"

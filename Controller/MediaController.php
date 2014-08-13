@@ -124,7 +124,6 @@ class MediaController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param int     $folderId
      *
      * @Route("bulkuploadsubmit/{folderId}", requirements={"folderId" = "\d+"}, name="KunstmaanMediaBundle_media_bulk_upload_submit")
@@ -132,7 +131,7 @@ class MediaController extends Controller
      *
      * @return array|RedirectResponse
      */
-    public function bulkUploadSubmitAction(Request $request, $folderId)
+    public function bulkUploadSubmitAction($folderId)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -374,5 +373,4 @@ class MediaController extends Controller
             $extraParams
         );
     }
-
 }

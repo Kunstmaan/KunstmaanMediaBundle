@@ -76,7 +76,6 @@ class FolderManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(array()));
 
         $this->object->getFolderHierarchy($this->folder);
-        $this->object->getFolderHierarchy($this->folder);
     }
 
     /**
@@ -88,9 +87,6 @@ class FolderManagerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getFolder')
             ->with($this->equalTo(1));
-
-        $rootFolder = $this->object->getRootFolderFor($this->folder);
-        $this->assertEquals(1, $rootFolder->getId());
 
         $rootFolder = $this->object->getRootFolderFor($this->folder);
         $this->assertEquals(1, $rootFolder->getId());
@@ -106,7 +102,6 @@ class FolderManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getParentIds')
             ->with($this->equalTo($this->folder));
 
-        $this->assertEquals(array(1, 2), $this->object->getParentIds($this->folder));
         $this->assertEquals(array(1, 2), $this->object->getParentIds($this->folder));
     }
 }

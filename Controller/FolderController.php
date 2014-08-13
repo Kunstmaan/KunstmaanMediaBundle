@@ -46,9 +46,9 @@ class FolderController extends Controller
         $mediaManager = $this->get('kunstmaan_media.media_manager');
 
         /* @var Folder $folder */
-        $folder  = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
+        $folder = $em->getRepository('KunstmaanMediaBundle:Folder')->getFolder($folderId);
 
-        $adminListConfigurator = new MediaAdminListConfigurator($em, null, $mediaManager, $folder, $request);
+        $adminListConfigurator = new MediaAdminListConfigurator($em, $mediaManager, $folder, $request);
         $adminList             = $this->get('kunstmaan_adminlist.factory')->createList($adminListConfigurator);
         $adminList->bindRequest($request);
 
@@ -150,12 +150,15 @@ class FolderController extends Controller
                     'Folder \'' . $folder->getName() . '\' has been created!'
                 );
 
-                return new Response('<script>window.location="' . $this->generateUrl(
+                return new Response(
+                    '<script>window.location="' .
+                    $this->generateUrl(
                         'KunstmaanMediaBundle_folder_show',
                         array(
                             'folderId' => $folder->getId()
                         )
-                    ) . '"</script>');
+                    ) .
+                    '"</script>');
             }
         }
 
@@ -171,5 +174,4 @@ class FolderController extends Controller
             )
         );
     }
-
 }

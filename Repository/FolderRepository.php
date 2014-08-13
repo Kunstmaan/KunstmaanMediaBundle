@@ -293,4 +293,25 @@ class FolderRepository extends NestedTreeRepository
         }
         $em->flush();
     }
+
+    public function selectFolderQueryBuilder(Folder $ignoreSubtree = null)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = $this->createQueryBuilder('f');
+        $qb->where('f.deleted != true')
+            ->orderBy('f.lft');
+
+        // Fetch all folders except the current one and its children
+        if (!is_null($ignoreSubtree) && $ignoreSubtree->getId() !== null) {
+            $orX = $qb->expr()->orX();
+            $orX->add('f.rgt > :right')
+                ->add('f.lft < :left');
+
+            $qb->andWhere($orX)
+                ->setParameter('left', $ignoreSubtree->getLeft())
+                ->setParameter('right', $ignoreSubtree->getRight());
+        }
+
+        return $qb;
+    }
 }
