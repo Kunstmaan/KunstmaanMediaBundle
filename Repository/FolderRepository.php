@@ -70,8 +70,8 @@ class FolderRepository extends NestedTreeRepository
     {
         $em = $this->getEntityManager();
 
-        $this->deleteMedia($folder, $em);
-        $this->deleteChildren($folder, $em);
+        $this->deleteMedia($folder);
+        $this->deleteChildren($folder);
         $folder->setDeleted(true);
         $em->persist($folder);
         $em->flush();
@@ -100,8 +100,8 @@ class FolderRepository extends NestedTreeRepository
 
         /** @var Folder $child */
         foreach ($folder->getChildren() as $child) {
-            $this->deleteMedia($child, $em);
-            $this->deleteChildren($child, $em);
+            $this->deleteMedia($child);
+            $this->deleteChildren($child);
             $child->setDeleted(true);
             $em->persist($child);
         }
@@ -136,7 +136,7 @@ class FolderRepository extends NestedTreeRepository
     {
         $folder = $this->find($folderId);
         if (!$folder) {
-            throw new EntityNotFoundException('The id given for the folder is not valid.');
+            throw new EntityNotFoundException();
         }
 
         return $folder;
@@ -146,7 +146,7 @@ class FolderRepository extends NestedTreeRepository
     {
         $folder = $this->findOneBy(array('parent' => null));
         if (!$folder) {
-            throw new EntityNotFoundException('No first top folder found (where parent is NULL)');
+            throw new EntityNotFoundException();
         }
 
         return $folder;

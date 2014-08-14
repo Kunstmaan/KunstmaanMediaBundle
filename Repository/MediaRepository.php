@@ -42,7 +42,7 @@ class MediaRepository extends EntityRepository
     {
         $media = $this->find($mediaId);
         if (!$media) {
-            throw new EntityNotFoundException('The id given for the media is not valid.');
+            throw new EntityNotFoundException();
         }
 
         return $media;
@@ -60,7 +60,7 @@ class MediaRepository extends EntityRepository
 
         $picture = $em->getRepository('KunstmaanMediaBundle:Image')->find($pictureId);
         if (!$picture) {
-            throw new EntityNotFoundException('Unable to find image.');
+            throw new EntityNotFoundException();
         }
 
         return $picture;

@@ -46,7 +46,7 @@ class MediaMenuAdaptor implements MenuAdaptorInterface
             $currentFolder = null;
             if (isset($currentId)) {
                 /* @var Folder $currentFolder */
-                $currentFolder = $this->repo->findOneById($currentId);
+                $currentFolder = $this->repo->find($currentId);
             }
 
             /** @var Folder $rootFolder */

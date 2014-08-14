@@ -26,6 +26,11 @@ class FolderManagerTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     /**
+     * @var array
+     */
+    private $parents;
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      * @covers Kunstmaan\MediaBundle\Helper\FolderManager::__construct
@@ -40,6 +45,19 @@ class FolderManagerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getParentIds')
             ->will($this->returnValue(array(1, 2)));
+
+        $folder1 = new Folder();
+        $folder1->setId(1);
+
+        $folder2 = new Folder();
+        $folder2->setId(2);
+
+        $this->parents = array($folder1, $folder2);
+
+        $this->repository
+            ->expects($this->any())
+            ->method('getPath')
+            ->will($this->returnValue(array($folder1, $folder2)));
 
         $rootFolder = new Folder();
         $rootFolder->setId(1);
@@ -103,5 +121,18 @@ class FolderManagerTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo($this->folder));
 
         $this->assertEquals(array(1, 2), $this->object->getParentIds($this->folder));
+    }
+
+    /**
+     * @covers Kunstmaan\MediaBundle\Helper\FolderManager::getParents
+     */
+    public function testGetParents()
+    {
+        $this->repository
+            ->expects($this->once())
+            ->method('getPath')
+            ->with($this->equalTo($this->folder));
+
+        $this->assertEquals($this->parents, $this->object->getParents($this->folder));
     }
 }

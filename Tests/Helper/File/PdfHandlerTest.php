@@ -4,7 +4,6 @@ namespace Kunstmaan\MediaBundle\Tests\Helper\File;
 
 use Kunstmaan\MediaBundle\Entity\Media;
 use Kunstmaan\MediaBundle\Helper\File\PdfHandler;
-use Kunstmaan\MediaBundle\Helper\Transformer\PreviewTransformerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 

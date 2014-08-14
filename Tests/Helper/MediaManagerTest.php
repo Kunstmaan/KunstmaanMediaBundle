@@ -14,16 +14,18 @@ class MediaManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $object;
 
+    private $fileHandler;
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp()
     {
-        $fileHandler = new FileHandler();
-        $fileHandler->setMediaPath(realpath(dirname(__DIR__).'/../../../../../../app/'));
+        $this->fileHandler = $this->getMockForAbstractClass('Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler');
+        $this->
         $this->object = new MediaManager();
-        $this->object->setDefaultHandler($fileHandler);
+        $this->object->setDefaultHandler($this->fileHandler);
     }
 
     /**
