@@ -127,11 +127,13 @@ class FileHelper
     public function setFile(File $file)
     {
         $this->file = $file;
-        $this->media->setContent($file);
-        $this->media->setContentType($file->getMimeType());
-        $this->media->setUrl(
-            '/uploads/media/' . $this->media->getUuid() . '.' . $this->media->getContent()->getExtension()
-        );
+        if ($file->getPathname()) {
+            $this->media->setContent($file);
+            $this->media->setContentType($file->getMimeType());
+            $this->media->setUrl(
+                '/uploads/media/' . $this->media->getUuid() . '.' . $this->media->getContent()->getExtension()
+            );
+        }
     }
 
     /**
