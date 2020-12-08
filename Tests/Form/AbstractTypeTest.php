@@ -10,9 +10,6 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * AbstractTypeTestCase
- */
 abstract class AbstractTypeTest extends WebTestCase
 {
     /**
@@ -35,10 +32,6 @@ abstract class AbstractTypeTest extends WebTestCase
      */
     protected $resolver;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp(): void
     {
         $formFactoryBuilderInterface = Forms::createFormFactoryBuilder();

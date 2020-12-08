@@ -26,12 +26,6 @@ class MediaValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @param $contentType
-     * @param $allowed
-     * @param $message
-     * @param $parameters
-     * @param $code
-     *
      * @dataProvider dataMimeTypes
      */
     public function testMimeTypeMatches($contentType, $allowed, $message = null, array $parameters = [], $code = null)
@@ -65,7 +59,6 @@ class MediaValidatorTest extends ConstraintValidatorTestCase
      * @param string $dimension
      * @param int    $value
      * @param string $message
-     * @param array  $parameters
      * @param int    $code
      *
      * @dataProvider dataDimensions

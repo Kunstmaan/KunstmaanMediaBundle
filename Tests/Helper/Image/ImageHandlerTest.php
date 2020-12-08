@@ -14,7 +14,7 @@ class ImageHandlerTest extends TestCase
     public function testPrepareWithSvg()
     {
         $media = new Media();
-        $media->setContent(new File(__DIR__.'/../../Fixtures/sample.svg'));
+        $media->setContent(new File(__DIR__ . '/../../Fixtures/sample.svg'));
 
         $handler = new ImageHandler(1, new MimeTypes(), null);
         $handler->setSlugifier(new Slugifier());

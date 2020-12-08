@@ -15,13 +15,9 @@ class MediaManagerTest extends TestCase
 
     private $defaultHandler;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp(): void
     {
-        $this->defaultHandler = $this->getMockForAbstractClass('Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler', array(0));
+        $this->defaultHandler = $this->getMockForAbstractClass('Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler', [0]);
         $this->defaultHandler
             ->expects($this->any())
             ->method('canHandle')
@@ -188,10 +184,10 @@ class MediaManagerTest extends TestCase
 
     public function testGetFolderAddActions()
     {
-        $actions = array();
+        $actions = [];
         $this->assertEquals($actions, $this->object->getFolderAddActions());
 
-        $actions = array('action1', 'action2');
+        $actions = ['action1', 'action2'];
         $handler = $this->getCustomHandler();
         $handler
             ->expects($this->once())
@@ -209,7 +205,7 @@ class MediaManagerTest extends TestCase
      */
     protected function getCustomHandler($media = null, $name = null)
     {
-        $handler = $this->getMockForAbstractClass('Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler', array(1));
+        $handler = $this->getMockForAbstractClass('Kunstmaan\MediaBundle\Helper\Media\AbstractMediaHandler', [1]);
         if (empty($name)) {
             $name = 'CustomHandler';
         }
